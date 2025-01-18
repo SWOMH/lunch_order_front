@@ -7,7 +7,7 @@ const initialState = {
 };
 
 
-export default function orderReducer(state = initialState, action) {
+export function orderReducer(state = initialState, action) {
     switch (action.type) {
         case ORDER_REQUEST:
             return { ...state, loading: true };

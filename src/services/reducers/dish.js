@@ -6,7 +6,7 @@ const initialState = {
     error: null,
 };
 
-export default function dishReducer(state = initialState, action) {
+export function dishReducer(state = initialState, action) {
     switch (action.type) {
         case DISH_REQUEST:
             return { ...state, loading: true };

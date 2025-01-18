@@ -12,15 +12,17 @@ export const loginUser = (telegramId) => {
         dispatch({type: USER_LOGIN_REQUEST});
         try {
             const response = await axios.get(`${API_URL_LOGIN}/${telegramId}`);
-            if (response.status === 200) {
+            if (response.status === 200 && response.data) {
                 dispatch({type: USER_LOGIN_SUCCESS, payload: response.data});
-            } else if (response.status === 404) {
-                dispatch({type: USER_UNDEFINED, payload: response.data});
             } else {
-                dispatch({type: USER_LOGIN_ERROR, payload: response.data});
+                dispatch({type: USER_UNDEFINED});
             }
         } catch (error) {
-            dispatch({type: USER_LOGIN_ERROR, payload: error});
+            if (error.response && error.response.status === 404) {
+                dispatch({type: USER_UNDEFINED});
+            } else {
+                dispatch({type: USER_LOGIN_ERROR, payload: error});
+            }
         }
     }
 }

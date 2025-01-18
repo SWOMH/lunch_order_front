@@ -2,23 +2,45 @@ import { USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS, USER_LOGIN_ERROR, USER_UNDEFINE
 
 const initialState = {
     user: null,
-    loading: false,
-    error: null,
-    undefined: false,
+    username: null,
+    isLoading: false,
+    hasError: false,
+    isUndefined: false,
+    error: null
 };
 
-export default function authReducer(state = initialState, action) {
+export const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case USER_LOGIN_REQUEST:
-            return { ...state, loading: true };
+            return {
+                ...state,
+                isLoading: true,
+                hasError: false,
+                isUndefined: false
+            };
         case USER_LOGIN_SUCCESS:
-            return { ...state, user: action.payload, loading: false };
+            return {
+                ...state,
+                isLoading: false,
+                user: action.payload,
+                hasError: false,
+                isUndefined: false
+            };
         case USER_LOGIN_ERROR:
-            return { ...state, error: action.payload, loading: false };
+            return {
+                ...state,
+                isLoading: false,
+                hasError: true,
+                error: action.payload
+            };
         case USER_UNDEFINED:
-            return { ...state, undefined: true, loading: false };
+            return {
+                ...state,
+                isLoading: false,
+                isUndefined: true
+            };
         default:
             return state;
-    } 
-}
+    }
+};
 

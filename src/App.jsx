@@ -1,32 +1,28 @@
-import './App.css'
-import { useEffect } from 'react';
+import {React, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser } from './services/actions/auth';
-import { getDishes } from './services/actions/dish';
-
+import { loginUser } from './services/actions/auth';
+import { Loader } from './components/ui/Loader';
+import { RegisterPage } from './components/pages/RegisterPage';
+import { DishesPage } from './components/pages/DishesPage';
 
 function App() {
   const dispatch = useDispatch();
-  const { dishes } = useSelector(state => state.dish);
-  
-  useEffect(() => {
-    const tg = window.Telegram.WebApp;
-    // Инициализация Web App
-    tg.ready();
-    // Получение данных пользователя
-    const user = tg.initDataUnsafe?.user;
-    if (user) {      
-      dispatch(getUser(user.id));
-    }
-    dispatch(getDishes());
-  }, [dishes, dispatch]);
-  
+  const { isLoading, user, isUndefined } = useSelector(state => state.auth);
 
-  return (
-    <>
-      
-    </>
-  )
+  useEffect(() => {
+    const telegramId = '123456'; // Временное значение для теста
+    dispatch(loginUser(telegramId));
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isUndefined || !user) {
+    return <RegisterPage />;
+  }
+
+  return <DishesPage />;
 }
 
-export default App
+export default App;

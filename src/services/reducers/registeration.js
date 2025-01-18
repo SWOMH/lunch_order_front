@@ -6,7 +6,7 @@ const initialState = {
     error: null,
 };
 
-export default function registrationReducer(state = initialState, action) {
+export function registrationReducer(state = initialState, action) {
     switch (action.type) {
         case USER_REGISTER_REQUEST:
             return { ...state, loading: true };

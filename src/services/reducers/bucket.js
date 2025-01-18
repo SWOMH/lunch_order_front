@@ -6,7 +6,7 @@ const initialState = {
     totalCount: 0,
 };
 
-export default function bucketReducer(state = initialState, action) {
+export function bucketReducer(state = initialState, action) {
     switch (action.type) {
         case ADD_DISH:
             return { ...state, dishes: [...state.dishes, action.payload], totalPrice: state.totalPrice + action.payload.price, totalCount: state.totalCount + 1 };
