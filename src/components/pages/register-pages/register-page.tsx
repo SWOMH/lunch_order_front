@@ -2,7 +2,7 @@ import React, { FC, useEffect, FormEvent, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { registerUser } from '../../../store/slices/authSlice';
 import { Loader } from '../../ui/Loader';
-import { styles } from './register.module.css';
+import styles from './register-page.module.css';
 import { IFormEvent } from '../../../types/other-types';
 import { selectUserInfoError, selectUserInfoLoading, selectUserRegistered } from '../../../store/selectors/user/userSelectors';
 
