@@ -1,15 +1,17 @@
 import { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { getUserInfo } from './store/slices/authSlice';
 import { Loader } from './components/ui/Loader';
 import { RegisterPage } from './components/pages/register-pages/register-page';
-import { DishesPage } from './components/pages/dish-pages/dishes-page';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { selectUserInfo, selectUserNotFound, selectUserInfoLoading } from './store/selectors/user/userSelectors';
+import './App.css';
 
 function App() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector(selectUserInfo); 
-  const userNotFound = useAppSelector(selectUserNotFound)
+  const userNotFound = useAppSelector(selectUserNotFound);
   const isLoading = useAppSelector(selectUserInfoLoading); 
 
   useEffect(() => { //@ts-ignore
@@ -29,6 +31,12 @@ function App() {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (user && !user.ban) {
+      navigate('/authorized');
+    }
+  }, [user, navigate]);
+
   if (isLoading) {
     return <Loader />;
   }
@@ -47,7 +55,7 @@ function App() {
     );
   }
   
-  return <DishesPage />;
+  return <Outlet />;
 }
 
 export default App;
