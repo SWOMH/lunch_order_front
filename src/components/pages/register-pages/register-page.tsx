@@ -1,105 +1,180 @@
-import React, { FC, useEffect, FormEvent, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { registerUser } from '../../../store/slices/authSlice';
+import { getUserInfo, registerUser } from '../../../store/slices/authSlice';
 import { Loader } from '../../ui/Loader';
-import styles from './register-page.module.css';
-import { IFormEvent } from '../../../types/other-types';
-import { selectUserInfoError, selectUserInfoLoading, selectUserRegistered } from '../../../store/selectors/user/userSelectors';
+import './register-page.css';
+import { selectUserInfoError, selectUserInfoLoading } from '../../../store/selectors/user/userSelectors';
+import { useNavigate } from 'react-router-dom';
 
-
-export const RegisterPage: FC = () => {
+export const RegisterPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const isLoading = useAppSelector(selectUserInfoLoading);
   const error = useAppSelector(selectUserInfoError);
-  const isRegistered = useAppSelector(selectUserRegistered);
-  const [fullName, setFullName] = useState('');
-  const [telegramId, setTelegramId] = useState('');
-  const [telegramName, setTelegramName] = useState('');
-  const [telegramUsername, setTelegramUsername] = useState('');
-  const [formError, setFormError] = useState('');
+  
+  const [formData, setFormData] = useState({
+    full_name: '',
+    telegram_id: '',
+    telegram_name: '',
+    telegram_username: ''
+  });
+  
+  const [formErrors, setFormErrors] = useState({
+    full_name: ''
+  });
+  
+  const [notFoundError, setNotFoundError] = useState(false);
 
-  useEffect(() => {// @ts-ignore
+  useEffect(() => { //@ts-ignore
     const tg = window.Telegram?.WebApp;
     
-    if (tg && tg.initDataUnsafe?.user) {
-      const user = tg.initDataUnsafe.user;
-      setTelegramId(user.id?.toString() || '');
-      setTelegramName(user.first_name || '');
-      
-      const firstName = user.first_name || '';
-      const lastName = user.last_name || '';
-      const fullNameFromTg = [firstName, lastName].filter(Boolean).join(' ');
-      
-      if (fullNameFromTg) {
-        setFullName(fullNameFromTg);
-      }
-      
-      if (user.username) {
-        setTelegramUsername(user.username);
+    if (tg) {
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        const firstName = user.first_name || '';
+        const lastName = user.last_name || '';
+        const fullName = [firstName, lastName].filter(Boolean).join(' ');
+        
+        setFormData(prev => ({
+          ...prev,
+          full_name: fullName || firstName || '',
+          telegram_id: user.id.toString(),
+          telegram_name: firstName || '',
+          telegram_username: user.username || ''
+        }));
       }
     } else {
-      setTelegramId('3');
+      // Для разработки используем тестовый ID
+      setFormData(prev => ({
+        ...prev,
+        telegram_id: '3'
+      }));
     }
   }, []);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    
-    if (!fullName.trim()) {
-      setFormError('Пожалуйста, введите ваше полное имя');
-      return;
-    }
-    
-    if (!telegramId) {
-      setFormError('Не удалось получить Telegram ID');
-      return;
-    }
-    
-    const userData = {
-      telegram_id: parseInt(telegramId),
-      full_name: fullName,
-      telegram_name: telegramName || null,
-      telegram_username: telegramUsername || null
+  const validateForm = () => {
+    const errors = {
+      full_name: ''
     };
+    let isValid = true;
     
-    dispatch(registerUser(userData));
+    if (!formData.full_name.trim()) {
+      errors.full_name = 'Имя обязательно для заполнения';
+      isValid = false;
+    }
+    
+    if (!formData.telegram_id) {
+      // Не показываем ошибку пользователю, просто логируем
+      console.error('Telegram ID не получен');
+      isValid = false;
+    }
+    
+    setFormErrors(errors);
+    return isValid;
   };
 
-  useEffect(() => {
-    if (isRegistered) {
-      window.location.reload();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNotFoundError(false);
+    
+    if (!validateForm()) {
+      return;
     }
-  }, [isRegistered]);
+
+    try {
+      const userData = {
+        telegram_id: parseInt(formData.telegram_id),
+        full_name: formData.full_name,
+        telegram_name: formData.telegram_name || null,
+        telegram_username: formData.telegram_username || null
+      };
+      
+      await dispatch(registerUser(userData)).unwrap();
+      // Получаем информацию о пользователе после регистрации
+      await dispatch(getUserInfo(formData.telegram_id)).unwrap();
+      // Перенаправляем на главную страницу
+      navigate('/authorized');
+    } catch (error: any) {
+      if (error?.status === 404) {
+        setNotFoundError(true);
+      }
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    if (formErrors[name as keyof typeof formErrors]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
 
   if (isLoading) {
     return <Loader />;
   }
 
   return (
-      <div className={styles.register_page}>              
-        <form onSubmit={handleSubmit} className={styles.register_form}>
-          <div className={styles.form_title}>
-            <h1>Регистрация</h1>
-            <p>Пожалуйста, заполните информацию о себе, чтобы продолжить.</p>
+    <div className="register-page">
+      <div className="register-form">
+        <h2 className="form-title">Регистрация</h2>
+        
+        {notFoundError && (
+          <div className="error-message">
+            Пользователь не найден. Пожалуйста, проверьте данные и попробуйте снова.
           </div>
-          {error && <div className={styles.error_message}>{error?.message}</div>}
-          {formError && <div className={styles.error_message}>{formError}</div>}
-          <div className={styles.form_group}>
+        )}
+        
+        {error && typeof error === 'string' && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="full_name">
+              Имя
+            </label>
             <input
-              className={styles.form_input}
               type="text"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Введите ваше полное имя"
-              required
+              id="full_name"
+              name="full_name"
+              className={`form-input ${formErrors.full_name ? 'error' : ''}`}
+              value={formData.full_name}
+              onChange={handleChange}
+              placeholder="Введите ваше имя"
             />
+            {formErrors.full_name && (
+              <div className="input-error">{formErrors.full_name}</div>
+            )}
           </div>
-          
-          <button className={styles.submit_button} type="submit" disabled={isLoading}>
-            Зарегистрироваться
+
+          <div className="form-group telegram-id-info">
+            <label className="form-label">
+              Telegram ID
+            </label>
+            <div className="telegram-id-display">
+              {formData.telegram_id ? formData.telegram_id : 'Идет получение Telegram ID...'}
+            </div>
+            <p className="telegram-id-note">ID получен автоматически из Telegram</p>
+          </div>
+
+          <button
+            type="submit"
+            className="submit-button"
+            disabled={isLoading || !formData.telegram_id}
+          >
+            {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
           </button>
         </form>
       </div>
+    </div>
   );
 };
