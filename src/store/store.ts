@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
-import dishReducer from './slices/dishSlice'
+import dishReducer from './slices/dishSlice';
+import orderReducer from './slices/orderingSlice';
 
 export const store = configureStore({
   reducer: {
     user: authReducer,
     dish: dishReducer,
+    order: orderReducer
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
