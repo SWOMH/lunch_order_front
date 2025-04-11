@@ -1,0 +1,129 @@
+.dishes-page {
+  padding-bottom: 80px;
+}
+
+.page-title {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.error-container {
+  padding: 2rem;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: 12px;
+  text-align: center;
+  color: #e74c3c;
+}
+
+.error-container h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.dish-categories {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  padding: 0 0 1rem;
+  margin-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-btn {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-btn.active {
+  background-color: #4a90e2;
+  color: white;
+  border-color: #4a90e2;
+}
+
+.category-btn:hover:not(.active) {
+  background-color: #f5f5f5;
+}
+
+.dishes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.dish-grid-item {
+  min-height: 280px;
+}
+
+.no-dishes {
+  grid-column: span 2;
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+}
+
+.cart-info {
+  position: fixed;
+  bottom: 74px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.cart-total {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.go-to-cart-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.go-to-cart-btn:hover {
+  background-color: #357abd;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 480px) {
+  .dishes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .no-dishes {
+    grid-column: span 1;
+  }
+}
+
+/* Поддержка безопасной зоны на iOS устройствах */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .dishes-page {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+  
+  .cart-info {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+} 
