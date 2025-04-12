@@ -4,7 +4,7 @@ import { selectAllDishes, selectDishesError, selectDishesLoading } from '../../.
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Loader } from '../../ui/Loader';
 import { getAllDish } from '../../../store/slices/dishSlice';
-import { DishCard } from '../../dish/DishCard';
+import { DishCard } from '../dish/dish-card';
 import { selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import { Link } from 'react-router-dom';
 import { IDish } from '../../../types/dish-types';
