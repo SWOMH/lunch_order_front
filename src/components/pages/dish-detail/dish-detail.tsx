@@ -2,7 +2,8 @@ import React, { FC } from 'react';
 import styles from './dish-detail.module.css';
 import { IDish } from '../../../types/dish-types';
 import { GitlabOutlined } from '@ant-design/icons';
-import { Divider } from 'antd';
+import { Divider, Empty, Image } from 'antd';
+import VariantWindow from './variant-window';
 
 interface IDishProps {
     dish: IDish;
@@ -23,19 +24,21 @@ const DishDetails: FC<IDishProps> = (dish) => {
                     {dish_el.name}
                 </h2>
             </div>
-            { dish_el.image ? 
-            <img         
-                // @ts-ignore
-                src={dish_el.image} 
-                alt={dish_el.name} 
-                className={styles.image}
-            /> : <GitlabOutlined />}
+            { dish_el.image ?
+            <Image
+            className={styles.image}
+            src={dish_el.image} /> 
+            : <Empty />}
             <Divider>Описание</Divider>
             <div className={`${styles.nutrients} mt-8 pb-15`}>
                 <div className={styles.nutrient}>
                     <span className="text text_type_digits-default text_color_inactive">{dish_el.description}</span>
-                </div>                
+                </div>          
             </div>
+            {dish_el.additives 
+            ? dish_el.variants?.map(variant => 
+            <div className={styles.variants} key={variant.id}><VariantWindow variant={variant}/></div>)
+            : <div>Добавки не найдены</div> }
         </div>
     );
 };
