@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    justify-content: space-between;
+}
+
+.button {
+    color: #fff;
+    background-color: rgb(167, 167, 167);
+}
