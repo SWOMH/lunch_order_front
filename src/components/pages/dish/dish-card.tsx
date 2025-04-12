@@ -40,7 +40,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
     <div className={`dish-card ${!dish.available || dish.stop_list ? 'dish-unavailable' : ''}`}>
       {count > 0 && <span className="dish-count">{count}</span>}
 
-      <Modal title="Basic Modal"
+      <Modal title="Подробности"
       footer={
         <Button type='primary'
         onClick={handleCancel}>Закрыть</Button>

@@ -8,6 +8,7 @@ import { DishCard } from '../dish/dish-card';
 import { selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import { Link } from 'react-router-dom';
 import { IDish } from '../../../types/dish-types';
+import { Segmented } from 'antd';
 
 export const DishesPage = () => {
   const dispatch = useAppDispatch();
@@ -41,11 +42,12 @@ export const DishesPage = () => {
       <h1 className="page-title">Меню</h1>
       
       <div className="dish-categories">
-        <button className="category-btn active">Все</button>
-        <button className="category-btn">Основные</button>
-        <button className="category-btn">Закуски</button>
-        <button className="category-btn">Десерты</button>
-        <button className="category-btn">Напитки</button>
+        <Segmented<string>
+        options={['Все', 'Пицца', 'Римская пицца', 'Роллы', 'Yearly']}
+        onChange={(value) => {
+          console.log(value); // string
+        }}
+        />
       </div>
       
       <div className="dishes-grid">
