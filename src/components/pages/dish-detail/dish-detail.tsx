@@ -36,8 +36,7 @@ const DishDetails: FC<IDishProps> = (dish) => {
                 </div>          
             </div>
             {dish_el.additives 
-            ? dish_el.variants?.map(variant => 
-            <div className={styles.variants} key={variant.id}><VariantWindow variant={variant}/></div>)
+            ? <VariantWindow variant={dish_el.variants}/>
             : <div>Добавки не найдены</div> }
         </div>
     );
