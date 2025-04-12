@@ -11,6 +11,7 @@ export interface IDish {
     _id: string;
     name: string;
     description: string | null;
+    price: number | null;
     image: string | null;
     available: boolean;
     type: string;
