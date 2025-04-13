@@ -20,7 +20,7 @@ export const selectTotalCartPrice = (state: RootState): number => {
   
   return dishes.reduce((total, dish) => {
     const count = counts[dish.id] || 0;
-    const price = dish.variants && dish.variants.length > 0 ? dish.variants[0].price : 0;
+    const price = dish.variants && dish.variants.length > 0 ? dish.variants[0].price : dish.price ? dish.price : 0;
     return total + (price * count);
   }, 0);
 };
