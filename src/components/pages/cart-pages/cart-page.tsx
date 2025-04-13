@@ -53,7 +53,7 @@ export const CartPage = () => {
       <div className="cart-list">
         {cartDishes.map(dish => {
           const count = cartCounts[dish.id] || 0;
-          const price = dish.variants && dish.variants.length > 0 ? dish.variants[0].price : 0;
+          const price = dish.variants && dish.variants.length > 0 ? dish.variants[0].price : dish.price ? dish.price : 0;
           
           return (
             <div key={dish.id} className="cart-item">
