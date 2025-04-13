@@ -68,7 +68,6 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
           <div className="dish-actions">
             {count > 0 && (
               <Button 
-                className="dish-action-btn remove-btn" 
                 onClick={handleRemoveFromCart}
               >
                 −
@@ -76,7 +75,6 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
             )}
             { !dish.additives ?
             <Button 
-              // className="dish-action-btn add-btn" 
               onClick={handleAddToCart} 
             >
               +
