@@ -1,13 +1,17 @@
 import React, { FC, useState, useEffect } from 'react';
-import { IVariants } from '../../../types/dish-types';
+import { IDish, IVariants } from '../../../types/dish-types';
 import styled from './variant-window.module.css';
 import { Button, Segmented } from 'antd';
+import { useAppDispatch } from '../../../store/hooks';
+import { addToCart } from '../../../store/slices/orderingSlice';
 
 interface VariantWindowProps {
+    dish: IDish;
     variant: IVariants[] | null;
 }
 
-const VariantWindow: FC<VariantWindowProps> = ({ variant }) => {
+const VariantWindow: FC<VariantWindowProps> = ({ dish, variant }) => {
+    const dispatch = useAppDispatch()
     const [selectedValue, setSelectedValue] = useState<string>('');
 
     useEffect(() => {
@@ -19,6 +23,18 @@ const VariantWindow: FC<VariantWindowProps> = ({ variant }) => {
     if (!variant || variant.length === 0) {
         return <div>Нет доступных вариантов</div>;
     }
+    
+    
+
+    const handleClick = () => {
+        const variant_s = variant.filter(v => v.size === selectedValue)
+        const selectedVariant = variant_s[0];
+        console.log(selectedValue)
+        dispatch(addToCart({
+            dish_id: dish.id,
+            variant_id: selectedVariant?.id 
+        }));
+    };
 
     const options = variant.map(v => ({
         label: (
@@ -41,7 +57,7 @@ const VariantWindow: FC<VariantWindowProps> = ({ variant }) => {
                     console.log('Выбран вариант:', value);
                 }}
             />
-            <Button className={styled.button}>
+            <Button className={styled.button} onClick={handleClick}>
                 Добавить {selectedValue && `(${selectedValue})`}
             </Button>
         </div>
