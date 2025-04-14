@@ -6,6 +6,11 @@ export interface IVariants {
     price: number;
 }
 
+export interface IDishesResponse {
+    dishes: IDish[];
+}
+
+
 export interface IDish {
     id: number;
     _id: string;
@@ -19,6 +24,8 @@ export interface IDish {
     is_combo: boolean;
     additives: boolean;
     variants: Array<IVariants> | null;
+    selectedVariant?: IVariants; // Добавьте это свойство
+    quantity?: number; // И это, если нужно
 }
 
 export interface IDishesState {

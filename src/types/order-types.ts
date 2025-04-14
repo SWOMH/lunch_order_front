@@ -1,8 +1,14 @@
 import { IDish } from './dish-types';
 
+
+export interface IBukketDish {
+  dish_id: number;
+  variant_id?: number;
+}
+
 export interface IBukket {
-  dish: IDish[];
-  counts: Record<number, number>;
+  dish: IBukketDish[];
+  counts: Record<string, number>;
   orderRequest: boolean;
   orderFailed: boolean;
 }
