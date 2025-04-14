@@ -93,7 +93,7 @@ export const RegisterPage = () => {
       // Получаем информацию о пользователе после регистрации
       await dispatch(getUserInfo(formData.telegram_id)).unwrap();
       // Перенаправляем на главную страницу
-      navigate('/authorized');
+      navigate('/authorized/dishes');
     } catch (error: any) {
       if (error?.status === 404) {
         setNotFoundError(true);
