@@ -2,10 +2,35 @@ import { RootState } from '../../store';
 import { IDish } from '../../../types/dish-types';
 
 // Селектор для получения всех блюд в корзине
-export const selectCartDishes = (state: RootState): IDish[] => state.order.dish;
+export const selectCartDishes = (state: RootState): IDish[] => {
+  const allDishes = state.dish.dishes;
+  const cartItems = state.order.dish;
+  const counts = state.order.counts;
+
+  return cartItems.map(cartItem => {
+    const dish = allDishes.find(d => d.id === cartItem.dish_id);
+    if (!dish) return undefined;
+
+    const dishCopy: IDish = {
+      ...dish,
+      variants: dish.variants ? [...dish.variants] : null,
+    };
+    
+    if (cartItem.variant_id) {
+      const variant = dish.variants?.find(v => v.id === cartItem.variant_id);
+      if (variant) {
+        dishCopy.price = variant.price;
+        dishCopy.selectedVariant = variant; // Сохраняем выбранный вариант
+      }
+    }
+
+    return dishCopy;
+  }).filter(Boolean) as IDish[];
+};
 
 // Селектор для получения количества блюд по ID
-export const selectCartCounts = (state: RootState): Record<number, number> => state.order.counts;
+export const selectCartCounts = (state: RootState): Record<string, number> => 
+  state.order.counts;
 
 // Селектор для получения общего количества блюд в корзине
 export const selectTotalCartItems = (state: RootState): number => {
@@ -13,14 +38,21 @@ export const selectTotalCartItems = (state: RootState): number => {
   return Object.values(counts).reduce((sum, count) => sum + count, 0);
 };
 
+
+
 // Селектор для получения общей стоимости корзины
 export const selectTotalCartPrice = (state: RootState): number => {
-  const dishes = state.order.dish;
+  const cartDishes = selectCartDishes(state);
   const counts = state.order.counts;
   
-  return dishes.reduce((total, dish) => {
-    const count = counts[dish.id] || 0;
-    const price = dish.variants && dish.variants.length > 0 ? dish.variants[0].price : dish.price ? dish.price : 0;
+  return cartDishes.reduce((total, dish) => {
+    const itemKey = dish.selectedVariant
+      ? `${dish.id}-${dish.selectedVariant.id}`
+      : `${dish.id}`;
+    
+    const count = counts[itemKey] || 0;
+    const price = dish.selectedVariant?.price || dish.price || 0;
+    
     return total + (price * count);
   }, 0);
 };
