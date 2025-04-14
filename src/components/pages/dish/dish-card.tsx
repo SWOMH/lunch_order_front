@@ -17,11 +17,11 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
   const count = useAppSelector(state => state.order.counts[dish.id] || 0);
   
   const handleAddToCart = () => {
-    dispatch(addToCart(dish));
+    dispatch(addToCart({dish_id: dish.id}));
   };
   
   const handleRemoveFromCart = () => {
-    dispatch(removeFromCart(dish.id));
+    dispatch(removeFromCart({dish_id: dish.id}));
   };
 
   const handleOpenModal = () => {
