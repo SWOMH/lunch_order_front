@@ -9,15 +9,12 @@ export const CartPage = () => {
   const cartCounts = useAppSelector(selectCartCounts);
   const totalPrice = useAppSelector(selectTotalCartPrice);
   
-  const handleAddDish = (dishId: number) => {
-    const dish = cartDishes.find(d => d.id === dishId);
-    if (dish) {
-      dispatch(addToCart(dish));
-    }
+  const handleAddDish = (dishId: number, variantId?: number) => {
+    dispatch(addToCart({ dish_id: dishId, variant_id: variantId }));
   };
   
-  const handleRemoveDish = (dishId: number) => {
-    dispatch(removeFromCart(dishId));
+  const handleRemoveDish = (dishId: number, variantId?: number) => {
+    dispatch(removeFromCart({ dish_id: dishId, variant_id: variantId }));
   };
   
   const handleClearCart = () => {
@@ -52,11 +49,17 @@ export const CartPage = () => {
       
       <div className="cart-list">
         {cartDishes.map(dish => {
-          const count = cartCounts[dish.id] || 0;
-          const price = dish.variants && dish.variants.length > 0 ? dish.variants[0].price : dish.price ? dish.price : 0;
+          // Генерируем ключ для счетчика (учитываем вариант)
+          const itemKey = dish.selectedVariant 
+            ? `${dish.id}-${dish.selectedVariant.id}`
+            : `${dish.id}`;
+          
+          const count = cartCounts[itemKey] || 0;
+          const price = dish.selectedVariant?.price || dish.price || 0;
+          const variantName = dish.selectedVariant?.size;
           
           return (
-            <div key={dish.id} className="cart-item">
+            <div key={`${dish.id}-${dish.selectedVariant?.id || ''}`} className="cart-item">
               <div className="cart-item-image">
                 <img 
                   src={dish.image || 'https://via.placeholder.com/80?text=Нет+фото'} 
@@ -66,13 +69,16 @@ export const CartPage = () => {
               
               <div className="cart-item-content">
                 <h3 className="cart-item-name">{dish.name}</h3>
+                {variantName && (
+                  <p className="cart-item-variant">Вариант: {variantName}</p>
+                )}
                 <p className="cart-item-price">{price} ₽</p>
               </div>
               
               <div className="cart-item-actions">
                 <button 
                   className="cart-action-btn remove-btn" 
-                  onClick={() => handleRemoveDish(dish.id)}
+                  onClick={() => handleRemoveDish(dish.id, dish.selectedVariant?.id)}
                 >
                   −
                 </button>
@@ -81,7 +87,7 @@ export const CartPage = () => {
                 
                 <button 
                   className="cart-action-btn add-btn" 
-                  onClick={() => handleAddDish(dish.id)}
+                  onClick={() => handleAddDish(dish.id, dish.selectedVariant?.id)}
                 >
                   +
                 </button>

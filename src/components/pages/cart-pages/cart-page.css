@@ -42,6 +42,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.cart-item-variant {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #666;
+}
+
 .cart-item-image {
   width: 80px;
   height: 80px;
