@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { API_GET_ALL_DISH } from '../../utils/api-constant';
-import { IDish, IDishesState } from '../../types/dish-types'
+import { IDish, IDishesResponse, IDishesState } from '../../types/dish-types'
 import { IApiError } from '../../types/other-types';
 
 
@@ -9,8 +9,8 @@ export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiErr
   'dish/getAllDish',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get<IDish[]>(API_GET_ALL_DISH);
-      return response.data;
+      const response = await axios.get<IDishesResponse>(API_GET_ALL_DISH);
+      return response.data.dishes;
     } catch (error) {
       if (!axios.isAxiosError(error)) {
         return rejectWithValue({
@@ -30,7 +30,7 @@ export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiErr
   }
 );
 
-  
+
 const initialState: IDishesState = {
     dishes: [],
     isLoading: false,
@@ -53,14 +53,14 @@ const dishSlice = createSlice({
       })
       .addCase(getAllDish.fulfilled, (state, action: PayloadAction<IDish[]>) => {
         state.isLoading = false;
-        state.dishes = action.payload;
+        state.dishes = [...action.payload];
       })
       .addCase(getAllDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isLoading = false;
         state.error = action.payload || { message: 'Неизвестная ошибка' };
       });
   }
-})
+});
 
 export const { clearDishesError } = dishSlice.actions;
 export default dishSlice.reducer;

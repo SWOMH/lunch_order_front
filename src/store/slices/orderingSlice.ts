@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IBukket } from '../../types/order-types';
+import { IBukket, IBukketDish } from '../../types/order-types';
 import { IDish } from '../../types/dish-types';
 
 export const createOrder = createAsyncThunk(
@@ -15,8 +15,10 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+
+
 const initialState: IBukket = {
-  dish: [],
+  dish: [], //[{dish: 1, variant: 1}, {...}]
   counts: {},
   orderRequest: false,
   orderFailed: false
@@ -27,30 +29,34 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     // Добавление блюда в корзину
-    addToCart: (state, action: PayloadAction<IDish>) => {
-      const dish = action.payload;
-      const dishId = dish.id;
+    addToCart: (state, action: PayloadAction<IBukketDish>) => {
+      const { dish_id, variant_id } = action.payload;
+      const itemKey = variant_id ? `${dish_id}-${variant_id}` : `${dish_id}`;
       
-      // Если блюда нет в корзине, добавляем его
-      if (!state.dish.some(d => d.id === dishId)) {
-        state.dish.push(dish);
+      // Если такого блюда (с вариантом) еще нет в корзине
+      if (!state.dish.some(d => 
+        d.dish_id === dish_id && 
+        d.variant_id === variant_id
+      )) {
+        state.dish.push(action.payload);
       }
       
-      // Увеличиваем счетчик для блюда
-      state.counts[dishId] = (state.counts[dishId] || 0) + 1;
+      // Увеличиваем счетчик для этого сочетания
+      state.counts[itemKey] = (state.counts[itemKey] || 0) + 1;
     },
     
     // Удаление блюда из корзины
-    removeFromCart: (state, action: PayloadAction<number>) => {
-      const dishId = action.payload;
+    removeFromCart: (state, action: PayloadAction<{dish_id: number, variant_id?: number}>) => {
+      const { dish_id, variant_id } = action.payload;
+      const itemKey = variant_id ? `${dish_id}-${variant_id}` : `${dish_id}`;
       
-      // Уменьшаем счетчик
-      if (state.counts[dishId] > 1) {
-        state.counts[dishId] -= 1;
+      if (state.counts[itemKey] > 1) {
+        state.counts[itemKey] -= 1;
       } else {
-        // Если это последнее блюдо, удаляем его из списка
-        delete state.counts[dishId];
-        state.dish = state.dish.filter(d => d.id !== dishId);
+        delete state.counts[itemKey];
+        state.dish = state.dish.filter(d => 
+          !(d.dish_id === dish_id && d.variant_id === variant_id)
+        );
       }
     },
     
