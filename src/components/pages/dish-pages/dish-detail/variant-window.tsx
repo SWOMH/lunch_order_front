@@ -1,9 +1,9 @@
 import React, { FC, useState, useEffect } from 'react';
-import { IDish, IVariants } from '../../../types/dish-types';
+import { IDish, IVariants } from '../../../../types/dish-types';
 import styled from './variant-window.module.css';
 import { Button, Segmented } from 'antd';
-import { useAppDispatch } from '../../../store/hooks';
-import { addToCart } from '../../../store/slices/orderingSlice';
+import { useAppDispatch } from '../../../../store/hooks';
+import { addToCart } from '../../../../store/slices/orderingSlice';
 
 interface VariantWindowProps {
     dish: IDish;

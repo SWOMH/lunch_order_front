@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addToCart, removeFromCart } from '../../../store/slices/orderingSlice';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { addToCart, removeFromCart } from '../../../../store/slices/orderingSlice';
 import './dish-card.css';
-import { IDish, IVariants } from '../../../types/dish-types';
+import { IDish, IVariants } from '../../../../types/dish-types';
 import { Button, Modal } from 'antd';
 import DishDetails from '../dish-detail/dish-detail'
 

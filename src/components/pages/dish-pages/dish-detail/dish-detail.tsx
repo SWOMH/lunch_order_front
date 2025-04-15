@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import styles from './dish-detail.module.css';
-import { IDish } from '../../../types/dish-types';
+import { IDish } from '../../../../types/dish-types';
 import { GitlabOutlined } from '@ant-design/icons';
 import { Divider, Empty, Image } from 'antd';
 import VariantWindow from './variant-window';
