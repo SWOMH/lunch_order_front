@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addToCart, clearCart, removeFromCart } from '../../../store/slices/orderingSlice';
 import { selectCartCounts, selectCartDishes, selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import './cart-page.css';
+import { Button } from 'antd';
 
 export const CartPage = () => {
   const dispatch = useAppDispatch();
@@ -76,21 +77,20 @@ export const CartPage = () => {
               </div>
               
               <div className="cart-item-actions">
-                <button 
-                  className="cart-action-btn remove-btn" 
+                <Button                
                   onClick={() => handleRemoveDish(dish.id, dish.selectedVariant?.id)}
                 >
                   −
-                </button>
+                </Button>
                 
                 <span className="cart-item-count">{count}</span>
                 
-                <button 
-                  className="cart-action-btn add-btn" 
+                <Button 
+                  type='primary'
                   onClick={() => handleAddDish(dish.id, dish.selectedVariant?.id)}
                 >
                   +
-                </button>
+                </Button>
               </div>
             </div>
           );

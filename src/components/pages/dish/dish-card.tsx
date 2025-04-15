@@ -14,14 +14,33 @@ interface DishCardProps {
 export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
   const dispatch = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const count = useAppSelector(state => state.order.counts[dish.id] || 0);
+  const counts = useAppSelector(state => state.order.counts);
+
+  const totalCount = Object.entries(counts).reduce((sum, [key, value]) => {
+    if (key.startsWith(`${dish.id}-`) || key === dish.id.toString()) {
+      return sum + value;
+    }
+    return sum;
+  }, 0);
   
   const handleAddToCart = () => {
     dispatch(addToCart({dish_id: dish.id}));
   };
   
   const handleRemoveFromCart = () => {
-    dispatch(removeFromCart({dish_id: dish.id}));
+    // Находим последний добавленный вариант этого блюда
+    const lastAddedKey = Object.keys(counts)
+      .filter(key => key.startsWith(`${dish.id}-`) || key === dish.id.toString())
+      .sort()
+      .pop();
+    
+    if (lastAddedKey) {
+      const [dishId, variantId] = lastAddedKey.split('-');
+      dispatch(removeFromCart({ 
+        dish_id: parseInt(dishId),
+        variant_id: variantId ? parseInt(variantId) : undefined
+      }));
+    }
   };
 
   const handleOpenModal = () => {
@@ -38,7 +57,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
   
   return (
     <div className={`dish-card ${!dish.available || dish.stop_list ? 'dish-unavailable' : ''}`}>
-      {count > 0 && <span className="dish-count">{count}</span>}
+      {totalCount > 0 && <span className="dish-count">{totalCount}</span>}
 
       <Modal title="Подробности"
       footer={
@@ -66,7 +85,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
           ? <div className="dish-price">{price} ₽</div> 
           :  <div className="dish-price">От {price} ₽</div> }
           <div className="dish-actions">
-            {count > 0 && (
+            {totalCount > 0 && (
               <Button 
                 onClick={handleRemoveFromCart}
               >
@@ -75,6 +94,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
             )}
             { !dish.additives ?
             <Button 
+              type='primary'
               onClick={handleAddToCart} 
             >
               +
