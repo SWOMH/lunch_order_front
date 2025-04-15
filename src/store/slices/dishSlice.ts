@@ -3,24 +3,27 @@ import axios from 'axios';
 import { API_GET_ALL_DISH } from '../../utils/api-constant';
 import { IDish, IDishesResponse, IDishesState } from '../../types/dish-types'
 import { IApiError } from '../../types/other-types';
+import { RootState } from '../store';
 
 
 export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiError }>(
   'dish/getAllDish',
-  async (_, { rejectWithValue }) => {
+  async (_, {getState, rejectWithValue }) => {
+    const { dish } = getState() as RootState
+    if (dish.isLoaded) {
+      return dish.dishes;
+    }
+
     try {
       const response = await axios.get<IDishesResponse>(API_GET_ALL_DISH);
       return response.data.dishes;
     } catch (error) {
+      console.error('Ошибка запроса:', error);
       if (!axios.isAxiosError(error)) {
-        return rejectWithValue({
-          message: 'Неизвестная ошибка'
-        });
+        return rejectWithValue({ message: 'Неизвестная ошибка' });
       }
       if (!error.response) {
-        return rejectWithValue({
-          message: 'Нет соединения с сервером'
-        });
+        return rejectWithValue({ message: 'Нет соединения с сервером' });
       }
       return rejectWithValue({
         status: error.response.status,

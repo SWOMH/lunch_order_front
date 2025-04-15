@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './dishes-page.css';
-import { selectAllDishes, selectDishesError, selectDishesLoading } from '../../../store/selectors/dish/dishSelectors';
+import { selectAllDishes, selectDishesError, selectDishesLoading, selectGroupedDishes } from '../../../store/selectors/dish/dishSelectors';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Loader } from '../../ui/Loader';
 import { getAllDish } from '../../../store/slices/dishSlice';
@@ -10,24 +10,13 @@ import { Link } from 'react-router-dom';
 import { IDish } from '../../../types/dish-types';
 import { Divider, Segmented } from 'antd';
 
-const groupDishesByType = (dishes: IDish[]) => {
-  const grouped: Record<string, IDish[]> = {};
-  
-  dishes.forEach(dish => {
-    if (!grouped[dish.type]) {
-      grouped[dish.type] = [];
-    }
-    grouped[dish.type].push(dish);
-  });
-  
-  return grouped;
-};
 
-export const DishesPage = () => {
+export const DishesPage = React.memo(() => {
   const dispatch = useAppDispatch();
 
   const [selectedType, setSelectedType] = useState<string>('Все');
   const dishes = useAppSelector(selectAllDishes);
+  const groupedDishes = useAppSelector(selectGroupedDishes);
   const isLoading = useAppSelector(selectDishesLoading);
   const error = useAppSelector(selectDishesError);
   const totalCartPrice = useAppSelector(selectTotalCartPrice);
@@ -36,19 +25,30 @@ export const DishesPage = () => {
 
 
   useEffect(() => {
-    if (!isLoaded){
-      dispatch(getAllDish());
+    let isMounted = true;
+    
+    const loadData = async () => {
+      if (!isLoaded && !isLoading) {
+        try {
+          await dispatch(getAllDish()).unwrap();
+        } catch (error) {
+          console.error('Ошибка загрузки:', error);
+        }
+      }
     };
-  }, [dispatch, isLoaded]);
-
-  useEffect(() => {
-    if (selectedType !== 'Все' && typeRefs.current[selectedType]) {
-      typeRefs.current[selectedType]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+  
+    if (isMounted) {
+      loadData();
     }
-  }, [selectedType]);
+  
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch, isLoaded, isLoading]);
+
+  const handleTypeChange = React.useCallback((type: string) => {
+    setSelectedType(type);
+  }, []);
 
   if (isLoading) {
     return <Loader />;
@@ -65,15 +65,9 @@ export const DishesPage = () => {
   // @ts-ignore
   const dishesArray: IDish[] = dishes?.dishes || dishes || [];
 
-  const groupedDishes = groupDishesByType(dishesArray);
-  const dishTypes = Object.keys(groupedDishes);  
-
   const allTypes = Array.from(new Set(dishesArray.map(d => d.type)));
   const options = ['Все', ...allTypes];
 
-  const handleTypeChange = (type: string) => {
-    setSelectedType(type);
-  };
 
   return (
     <div className="dishes-page">
@@ -82,7 +76,7 @@ export const DishesPage = () => {
       <div className="dish-categories">
         <Segmented<string>
           options={options}
-          onChange={setSelectedType}
+          onChange={handleTypeChange}
           value={selectedType}
         />
       </div>
@@ -120,4 +114,4 @@ export const DishesPage = () => {
       )}
     </div>
   );
-};
+});

@@ -1,8 +1,22 @@
 import { RootState } from '../../store';
 import { IDish } from '../../../types/dish-types';
+import { createSelector } from '@reduxjs/toolkit';
 
 // Получение всех блюд
 export const selectAllDishes = (state: RootState): IDish[] => state.dish.dishes;
+
+// Группированные блюда по типу блюда
+export const selectGroupedDishes = createSelector(
+  selectAllDishes,
+  (dishes) => {
+    const grouped: Record<string, IDish[]> = {};
+    dishes.forEach(dish => {
+      if (!grouped[dish.type]) grouped[dish.type] = [];
+      grouped[dish.type].push(dish);
+    });
+    return grouped;
+  }
+);
 
 // Получение статуса загрузки
 export const selectDishesLoading = (state: RootState): boolean => state.dish.isLoading;

@@ -29,7 +29,6 @@ const VariantWindow: FC<VariantWindowProps> = ({ dish, variant }) => {
     const handleClick = () => {
         const variant_s = variant.filter(v => v.size === selectedValue)
         const selectedVariant = variant_s[0];
-        console.log(selectedValue)
         dispatch(addToCart({
             dish_id: dish.id,
             variant_id: selectedVariant?.id 
@@ -54,7 +53,6 @@ const VariantWindow: FC<VariantWindowProps> = ({ dish, variant }) => {
                 value={selectedValue}
                 onChange={(value) => {
                     setSelectedValue(value);
-                    console.log('Выбран вариант:', value);
                 }}
             />
             <Button className={styled.button} onClick={handleClick}>

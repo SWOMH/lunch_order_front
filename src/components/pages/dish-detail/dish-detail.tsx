@@ -11,7 +11,6 @@ interface IDishProps {
 
 const DishDetails: FC<IDishProps> = (dish) => {
     const dish_el = dish.dish
-    console.log(dish_el.name)
 
     if (!dish) {
         return <div>Блюдо не найден</div>;
