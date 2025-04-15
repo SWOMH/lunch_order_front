@@ -32,10 +32,14 @@ export const DishesPage = () => {
   const error = useAppSelector(selectDishesError);
   const totalCartPrice = useAppSelector(selectTotalCartPrice);
   const typeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const isLoaded = useAppSelector(state => state.dish.isLoaded);
+
 
   useEffect(() => {
-    dispatch(getAllDish());
-  }, [dispatch]);
+    if (!isLoaded){
+      dispatch(getAllDish());
+    };
+  }, [dispatch, isLoaded]);
 
   useEffect(() => {
     if (selectedType !== 'Все' && typeRefs.current[selectedType]) {

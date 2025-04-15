@@ -31,5 +31,6 @@ export interface IDish {
 export interface IDishesState {
     dishes: IDish[];
     isLoading: boolean;
+    isLoaded: boolean;
     error: string | IApiError | null;
   }

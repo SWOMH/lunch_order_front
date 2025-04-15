@@ -34,6 +34,7 @@ export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiErr
 const initialState: IDishesState = {
     dishes: [],
     isLoading: false,
+    isLoaded: false,
     error: null,
 };
 
@@ -48,12 +49,15 @@ const dishSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getAllDish.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        if (!state.isLoaded) {
+          state.isLoading = true;
+          state.error = null;
+        }
       })
       .addCase(getAllDish.fulfilled, (state, action: PayloadAction<IDish[]>) => {
         state.isLoading = false;
         state.dishes = [...action.payload];
+        state.isLoaded = true;
       })
       .addCase(getAllDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isLoading = false;
