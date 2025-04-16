@@ -2,13 +2,16 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addToCart, clearCart, removeFromCart } from '../../../store/slices/orderingSlice';
 import { selectCartCounts, selectCartDishes, selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import './cart-page.css';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 
 export const CartPage = () => {
   const dispatch = useAppDispatch();
   const cartDishes = useAppSelector(selectCartDishes);
   const cartCounts = useAppSelector(selectCartCounts);
   const totalPrice = useAppSelector(selectTotalCartPrice);
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = 'updatable';
   
   const handleAddDish = (dishId: number, variantId?: number) => {
     dispatch(addToCart({ dish_id: dishId, variant_id: variantId }));
@@ -23,7 +26,19 @@ export const CartPage = () => {
   };
   
   const handleCheckout = () => {
-    alert('Заказ оформлен!');
+    messageApi.open({
+      key,
+      type: 'loading',
+      content: 'Оформление...',
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type: 'success',
+        content: 'Заказ оформлен!',
+        duration: 2,
+      });
+    }, 1000);
   };
   
   if (cartDishes.length === 0) {
@@ -108,7 +123,7 @@ export const CartPage = () => {
           <div className="cart-total-label">Итого:</div>
           <div className="cart-total-value">{totalPrice} ₽</div>
         </div>
-        
+        {contextHolder}
         <button className="checkout-button" onClick={handleCheckout}>
           Оформить заказ
         </button>
