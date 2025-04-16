@@ -1,5 +1,29 @@
 import { IDish } from './dish-types';
+import { ITelegramId } from './user-types';
 
+interface IUserRequestOrderHistory {
+  telegram_id: ITelegramId;
+  full_name: string;
+}
+
+
+interface IOrderItems {
+  dish_id: number;
+  dish_name: string;
+  count: number;
+  price: number;
+}
+
+type OrderStatus = 'formalized' | 'completed' | 'canceled' | 'deleted' | 'unknown';
+
+export interface IAllOrdersHistory {
+  order_id: number;
+  user: IUserRequestOrderHistory;
+  datetime: string;
+  amount: number;
+  status: OrderStatus;
+  items: IOrderItems[];
+}
 
 export interface IBukketDish {
   dish_id: number;
@@ -11,6 +35,7 @@ export interface IBukket {
   counts: Record<string, number>;
   orderRequest: boolean;
   orderFailed: boolean;
+  orderHistory: IAllOrdersHistory[]
 }
 
 export interface IOrderInfo {

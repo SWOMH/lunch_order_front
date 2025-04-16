@@ -21,7 +21,8 @@ const initialState: IBukket = {
   dish: [], //[{dish: 1, variant: 1}, {...}]
   counts: {},
   orderRequest: false,
-  orderFailed: false
+  orderFailed: false,
+  orderHistory: [] // Нужно будет на беке сделать разделение исторических заказов на актуальные и не актуальные, а не разделять все на 2 эндпоинта
 };
 
 const orderSlice = createSlice({
