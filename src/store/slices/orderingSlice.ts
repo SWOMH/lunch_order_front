@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IBukket, IBukketDish } from '../../types/order-types';
+import { IAllOrdersHistory, IBukket, IBukketDish } from '../../types/order-types';
 import { IDish } from '../../types/dish-types';
+import { IApiError } from '../../types/other-types';
+import { API_USER_ALL_ORDERS } from '../../utils/api-constant';
 
 export const createOrder = createAsyncThunk(
   'order/createOrder',
   async (_, { getState, rejectWithValue }) => {
     try {
-      // Здесь надо будет добавить логику отправки заказа, но добавлю потом
+      // Здесь надо будет добавить логику отправки заказа, но добавлю потом 
       return { success: true };
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -15,6 +17,24 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+interface IOrdersResponse {
+  orders: IAllOrdersHistory[];
+}
+
+export const getUserOrders = createAsyncThunk<IAllOrdersHistory[], number, { rejectValue: IApiError }>(
+  'order/getUserOrders',
+  async (telegramId: number, { rejectWithValue }) => {
+    try {
+      const response = await axios.get<IOrdersResponse>(`${API_USER_ALL_ORDERS}/?telegram_id=${telegramId}`);
+      return response.data.orders;
+    } catch (error: any) {
+      return rejectWithValue({
+        message: error.response?.data?.message || error.message,
+        status: error.response?.status
+      });
+    }
+  }
+);
 
 
 const initialState: IBukket = {
@@ -22,7 +42,9 @@ const initialState: IBukket = {
   counts: {},
   orderRequest: false,
   orderFailed: false,
-  orderHistory: [] // Нужно будет на беке сделать разделение исторических заказов на актуальные и не актуальные, а не разделять все на 2 эндпоинта
+  orderHistory: [], // Нужно будет на беке сделать разделение исторических заказов на актуальные и не актуальные, а не разделять все на 2 эндпоинта
+  orderHistoryRequest: false,
+  orderHistoryFailed: false
 };
 
 const orderSlice = createSlice({
@@ -82,6 +104,18 @@ const orderSlice = createSlice({
       .addCase(createOrder.rejected, (state) => {
         state.orderRequest = false;
         state.orderFailed = true;
+      })
+      .addCase(getUserOrders.pending, (state) => {
+        state.orderHistoryRequest = true;
+        state.orderHistoryFailed = false;
+      })
+      .addCase(getUserOrders.fulfilled, (state, action: PayloadAction<IAllOrdersHistory[]>) => {
+        state.orderHistoryRequest = false;
+        state.orderHistory = action.payload;
+      })
+      .addCase(getUserOrders.rejected, (state) => {
+        state.orderHistoryRequest = false;
+        state.orderHistoryFailed = true;
       });
   }
 });

@@ -35,7 +35,9 @@ export interface IBukket {
   counts: Record<string, number>;
   orderRequest: boolean;
   orderFailed: boolean;
-  orderHistory: IAllOrdersHistory[]
+  orderHistory: IAllOrdersHistory[];
+  orderHistoryRequest: boolean;
+  orderHistoryFailed: boolean;
 }
 
 export interface IOrderInfo {
