@@ -16,6 +16,20 @@
   margin-bottom: 1rem;
 }
 
+.error-container {
+  padding: 2rem;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: 12px;
+  text-align: center;
+  color: #e74c3c;
+}
+
+.error-container h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+
 .empty-text {
   font-size: 1.25rem;
   font-weight: 600;
