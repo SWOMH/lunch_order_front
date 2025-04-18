@@ -6,12 +6,17 @@ interface IUserRequestOrderHistory {
   full_name: string;
 }
 
+interface IVariant {
+  id: number;
+  size: string;
+};
 
 interface IOrderItems {
   dish_id: number;
   dish_name: string;
   count: number;
   price: number;
+  variant?: IVariant;
 }
 
 type OrderStatus = 'formalized' | 'completed' | 'canceled' | 'deleted' | 'unknown';
