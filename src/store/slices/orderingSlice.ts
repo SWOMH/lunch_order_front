@@ -21,11 +21,11 @@ interface IOrdersResponse {
   orders: IAllOrdersHistory[];
 }
 
-export const getUserOrders = createAsyncThunk<IAllOrdersHistory[], number, { rejectValue: IApiError }>(
+export const getUserOrders = createAsyncThunk<IAllOrdersHistory[], string, { rejectValue: IApiError }>(
   'order/getUserOrders',
-  async (telegramId: number, { rejectWithValue }) => {
+  async (telegramId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get<IOrdersResponse>(`${API_USER_ALL_ORDERS}/?telegram_id=${telegramId}`);
+      const response = await axios.get<IOrdersResponse>(`${API_USER_ALL_ORDERS}?telegram_id=${telegramId}`);
       return response.data.orders;
     } catch (error: any) {
       return rejectWithValue({
