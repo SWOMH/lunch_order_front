@@ -1,5 +1,6 @@
 import { RootState } from '../../store';
 import { IDish } from '../../../types/dish-types';
+import { IAllOrdersHistory } from '../../../types/order-types';
 
 // Селектор для получения всех блюд в корзине
 export const selectCartDishes = (state: RootState): IDish[] => {
@@ -62,3 +63,10 @@ export const selectOrderLoading = (state: RootState): boolean => state.order.ord
 
 // Селектор для получения ошибки заказа
 export const selectOrderError = (state: RootState): boolean => state.order.orderFailed; 
+
+// Селектор для получения данных о заказах по определенному человеку
+export const selectOrderUserHistory = (state: RootState): IAllOrdersHistory[] => state.order.orderHistory; 
+
+export const selectOrderHistoryLoading = (state: RootState): boolean => state.order.orderHistoryRequest;
+
+export const selectOrderHistoryError = (state: RootState): boolean => state.order.orderHistoryFailed;
