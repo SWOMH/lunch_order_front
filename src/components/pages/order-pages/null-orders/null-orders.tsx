@@ -1,4 +1,4 @@
-import './orders-page.css';
+import './null-orders.module.css';
 
 export const NullOrdersPage = () => {
   return (
