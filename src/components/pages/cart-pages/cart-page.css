@@ -1,8 +1,10 @@
 .cart-page {
   padding-bottom: 200px;
+  width: 90vw;
 }
 
 .cart-empty-state {
+  font-family: "Poetsen One", sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,15 +19,17 @@
 }
 
 .empty-text {
-  font-size: 1.25rem;
+  font-family: "Caveat", cursive;
+  font-size: 2rem;
   font-weight: 600;
   color: #333;
   margin-bottom: 0.5rem;
 }
 
 .empty-desc {
+  font-family: "Caveat", cursive;
   color: #888;
-  font-size: 0.875rem;
+  font-size: 2rem;
 }
 
 .cart-list {
@@ -49,8 +53,8 @@
 }
 
 .cart-item-image {
-  width: 80px;
-  height: 80px;
+  /* width: 80px; */
+  height: 120px;
   border-radius: 8px;
   overflow: hidden;
   margin-right: 1rem;
@@ -70,15 +74,20 @@
 
 .cart-item-name {
   margin: 0 0 0.5rem;
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: 600;
   color: #333;
+}
+
+.cart-button{
+  height: 4vw;
+  width:  4vw;
 }
 
 .cart-item-price {
   margin: 0;
   color: #666;
-  font-size: 0.875rem;
+  font-size: 1.3rem;
 }
 
 .cart-item-actions {

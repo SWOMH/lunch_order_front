@@ -5,11 +5,24 @@
     justify-content: center;
 }
 
+.text {
+    font-family: "Caveat", cursive;
+    font-size: 1.5rem;
+}
+
 .title {
+    font-family: "Caveat", cursive;
+    font-size: 2rem;
     margin: auto;
 }
 
+.divider {
+    font-family: "Caveat", cursive;
+    font-size: 1.5rem;
+}
+
 .variants {
+    font-family: "Caveat", cursive;
     width: 100%;
 }
 

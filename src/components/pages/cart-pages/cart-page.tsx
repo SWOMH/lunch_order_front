@@ -92,7 +92,8 @@ export const CartPage = () => {
               </div>
               
               <div className="cart-item-actions">
-                <Button                
+                <Button
+                  className='cart-button'          
                   onClick={() => handleRemoveDish(dish.id, dish.selectedVariant?.id)}
                 >
                   −
@@ -101,6 +102,7 @@ export const CartPage = () => {
                 <span className="cart-item-count">{count}</span>
                 
                 <Button 
+                  className='cart-button'
                   type='primary'
                   onClick={() => handleAddDish(dish.id, dish.selectedVariant?.id)}
                 >

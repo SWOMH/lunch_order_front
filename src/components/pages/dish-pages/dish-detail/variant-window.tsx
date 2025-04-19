@@ -48,7 +48,7 @@ const VariantWindow: FC<VariantWindowProps> = ({ dish, variant }) => {
     return (
         <div className={styled.container}>
             <Segmented<string>
-                size="large"
+                className={styled.segment}
                 options={options}
                 value={selectedValue}
                 onChange={(value) => {

@@ -11,7 +11,14 @@
     gap: 50px;
 }
 
+.segment{
+    font-family: "Caveat", cursive;
+    font-size: 2rem;
+}
+
 .button {
+    font-family: "Caveat", cursive;
+    font-size: 1.4rem;
     color: #fff;
     background-color: rgb(167, 167, 167);
 }

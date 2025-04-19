@@ -28,10 +28,10 @@ const DishDetails: FC<IDishProps> = (dish) => {
             className={styles.image}
             src={dish_el.image} /> 
             : <Empty />}
-            <Divider>Описание</Divider>
+            <Divider className={styles.divider}>Описание</Divider>
             <div className={`${styles.nutrients} mt-8 pb-15`}>
                 <div className={styles.nutrient}>
-                    <span className="text text_type_digits-default text_color_inactive">{dish_el.description}</span>
+                    <span className={styles.text}>{dish_el.description}</span>
                 </div>          
             </div>
             {dish_el.additives 
