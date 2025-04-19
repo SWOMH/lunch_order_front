@@ -1,5 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import './BottomNavMenu.css';
+import { useAppSelector } from '../../store/hooks';
+import { selectUserIsAdmin } from '../../store/selectors/user/userSelectors';
+import { UserOutlined } from '@ant-design/icons';
 
 // Иконки для навигации
 const MenuIcon = () => (
@@ -21,6 +24,9 @@ const OrdersIcon = () => (
 );
 
 export const BottomNavMenu = () => {
+
+  const isAdmin = useAppSelector(selectUserIsAdmin)
+
   return (
     <nav className="bottom-nav">
       <NavLink 
@@ -46,6 +52,14 @@ export const BottomNavMenu = () => {
         <OrdersIcon />
         <span>Заказы</span>
       </NavLink>
+
+      {isAdmin && <NavLink
+      to='/admin'
+      className={({ isActive }) => isActive ? 'bottom-nav-item active' : 'bottom-nav-item'}>
+        <UserOutlined style={{ fontSize: '24px'}}/>
+        <span>Админ</span>
+        </NavLink>}
+
     </nav>
   );
 }; 

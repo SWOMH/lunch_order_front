@@ -4,6 +4,8 @@ import { DishesPage } from '../components/pages/dish-pages/dishes-page';
 import { CartPage } from '../components/pages/cart-pages/cart-page';
 import { OrdersPage } from '../components/pages/order-pages/orders-page';
 import App from '../App';
+import { AdminMainMenu } from '../components/pages/admin-pages/admin-main-menu';
+import { AdminDishPage } from '../components/pages/admin-pages/admin-dishes/admin-dish';
 
 export const routes: RouteObject[] = [
   {
@@ -29,6 +31,20 @@ export const routes: RouteObject[] = [
           {
             path: 'orders',
             element: <OrdersPage />
+          }
+        ]
+      },
+      {
+        path: 'admin',
+        element: <AppLayout />,
+        children: [
+          {
+            path: '',
+            element: <AdminMainMenu />
+          },
+          {
+            path: 'dish',
+            element: <AdminDishPage />
           }
         ]
       }
