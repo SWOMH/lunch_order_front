@@ -8,7 +8,8 @@ import { DishCard } from './dish/dish-card';
 import { selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import { Link } from 'react-router-dom';
 import { IDish } from '../../../types/dish-types';
-import { Divider, Segmented } from 'antd';
+import { Button, Divider, Segmented } from 'antd';
+import { selectUserIsAdmin } from '../../../store/selectors/user/userSelectors';
 
 
 export const DishesPage = React.memo(() => {
@@ -72,7 +73,6 @@ export const DishesPage = React.memo(() => {
   return (
     <div className="dishes-page">
       <h1 className="page-title">Меню</h1>
-      
       <div className="dish-categories">
         <Segmented<string>
           options={options}

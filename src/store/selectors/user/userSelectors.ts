@@ -13,3 +13,5 @@ export const selectUserInfoError = (state: RootState): string | IApiError | null
   state.user.error;
 
 export const selectUserRegistered = (state: RootState): boolean => state.user.isRegistered;
+
+export const selectUserIsAdmin = (state: RootState): boolean => state.user.user?.admin || false;

@@ -1,0 +1,28 @@
+.admin_page {
+    padding-bottom: 200px;
+    width: 90vw;
+}
+
+.page_title {
+    color: black;
+}
+
+.card_title {
+    font-size: 2rem;
+}
+
+.admin_list_menu {
+    margin-bottom: 1.5rem;
+}
+
+.list_item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: white;
+    color: black;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
