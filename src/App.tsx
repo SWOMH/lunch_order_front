@@ -26,7 +26,7 @@ function App() {
       }
     } else {
       // Для тестирования без Telegram WebApp
-      const testTelegramId = '3';
+      const testTelegramId = '1';
       dispatch(getUserInfo(testTelegramId));
     }
   }, [dispatch]);
