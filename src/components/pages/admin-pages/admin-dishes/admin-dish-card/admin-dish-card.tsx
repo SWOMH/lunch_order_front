@@ -2,49 +2,52 @@ import React, { useState } from "react";
 import style from './admin-dish-card.module.css';
 import { Button, Modal } from "antd";
 import { IDish } from "../../../../../types/dish-types";
-import DishDetails from "../../../dish-pages/dish-detail/dish-detail";
-
+import DishEditForm from "../admin-dish-edit-modal/admin-dish-edit-modal";
 
 interface IDishCardProps {
     dish: IDish;
+    // onDishUpdate: (updatedDish: IDish) => void;
 };
 
 interface IDishEditButtonProps {
     setIsModalOpen: (value: boolean) => void;
 };
   
-  const DishEditButton: React.FC<IDishEditButtonProps> = ({ setIsModalOpen }) => {
+const DishEditButton: React.FC<IDishEditButtonProps> = ({ setIsModalOpen }) => {
     const handleOpenModalClick = () => {
       setIsModalOpen(true);
     };
   
     return (
       <div className={style.edit_buttons}>
-        <Button className={style.cart_button} onClick={() => {}}>Убрать из меню</Button>
+        {/* <Button className={style.cart_button} onClick={() => {}}>Убрать из меню</Button> */}
         <Button type="primary" onClick={handleOpenModalClick}>Изменить</Button>
       </div>
     );
-  }
-
-
+}
 
 export const AdminDishCard: React.FC<IDishCardProps> = ({ dish }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-    const handleCloseModalClick = () => {
+    const handleCancel = () => {
         setIsModalOpen(false);
     };
     
     return (
         <div key={dish.id} className={style.cart_item}>
-              <Modal title="Подробности"
-                footer={
-                  <Button type='primary'
-                  onClick={handleCloseModalClick}>Закрыть</Button>
-                }
-                open={isModalOpen}>
-                  <DishDetails dish={dish}></DishDetails>
+              <Modal 
+                title="Редактирование блюда"
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={null}
+                width={800}
+              >
+                <DishEditForm 
+                  dish={dish} 
+                  onSave={handleCancel} 
+                  onCancel={handleCancel} 
+                />
               </Modal>
               <div className={style.cart_item_image}>
                 <img 
