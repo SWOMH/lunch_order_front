@@ -21,4 +21,4 @@ export const API_ADMIN_EDIT_USER_STATUS = `${API_URL_HOST}/user/edit_status`
 export const API_ADMIN_URL_ALL_ORDERS = `${API_URL_HOST}/order/actual_orders`
 export const API_ADMIN_URL_EDIT_ORDER = `${API_URL_HOST}/order/edit_status`
 export const API_ADMIN_ADD_DISH = `${API_URL_HOST}/dish/add`
-export const API_ADMIN_EDIT_DISH = `${API_URL_HOST}/dish/` // put запрос в url передать id dish
+export const API_ADMIN_EDIT_DISH = `${API_URL_HOST}/dish/update` // put запрос в url передать id dish

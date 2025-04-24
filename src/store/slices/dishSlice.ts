@@ -4,6 +4,7 @@ import { API_GET_ALL_DISH } from '../../utils/api-constant';
 import { IDish, IDishesResponse, IDishesState } from '../../types/dish-types'
 import { IApiError } from '../../types/other-types';
 import { RootState } from '../store';
+import { API_ADMIN_EDIT_DISH } from '../../utils/api-constant';
 
 
 export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiError }>(
@@ -32,6 +33,47 @@ export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiErr
     }
   }
 );
+
+
+interface DishUpdateData {
+  dish_name: string;
+  description: string;
+  price: number;
+  available: boolean;
+  image: string | null;
+  type: string;
+  stop_list: boolean;
+  is_combo: boolean;
+  additives: boolean;
+  variants: Array<{
+    dish_id: number;
+    size: string;
+    price: number;
+  }> | null;
+};
+
+export const updateDish = createAsyncThunk<IDish, { dishId: number; dishData: DishUpdateData }, { rejectValue: IApiError }>(
+  'dish/updateDish',
+  async ({ dishId, dishData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put<IDish>(`${API_ADMIN_EDIT_DISH}/${dishId}`, dishData);
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка при обновлении блюда:', error);
+      if (!axios.isAxiosError(error)) {
+        return rejectWithValue({ message: 'Неизвестная ошибка' });
+      }
+      if (!error.response) {
+        return rejectWithValue({ message: 'Нет соединения с сервером' });
+      }
+      return rejectWithValue({
+        status: error.response.status,
+        message: error.response.data?.message || 'Ошибка при обновлении блюда'
+      });
+    }
+  }
+);
+
 
 
 const initialState: IDishesState = {
@@ -65,6 +107,20 @@ const dishSlice = createSlice({
       .addCase(getAllDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isLoading = false;
         state.error = action.payload || { message: 'Неизвестная ошибка' };
+      })
+      .addCase(updateDish.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateDish.fulfilled, (state, action: PayloadAction<IDish>) => {
+        state.isLoading = false;
+        state.dishes = state.dishes.map(dish => 
+          dish.id === action.payload.id ? action.payload : dish
+        );
+      })
+      .addCase(updateDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
+        state.isLoading = false;
+        state.error = action.payload || { message: 'Ошибка при обновлении блюда' };
       });
   }
 });
