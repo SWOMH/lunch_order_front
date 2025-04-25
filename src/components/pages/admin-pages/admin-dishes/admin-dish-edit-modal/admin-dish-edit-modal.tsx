@@ -77,7 +77,7 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
                   size: v.size,
                   price: v.price
                 }))
-              : null
+              : []
           };
     
           const resultAction = await dispatch(updateDish({
