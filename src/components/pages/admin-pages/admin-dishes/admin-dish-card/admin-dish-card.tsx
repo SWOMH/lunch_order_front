@@ -61,9 +61,9 @@ export const AdminDishCard: React.FC<IDishCardProps> = ({ dish }) => {
                 <p className={style.cart_item_price}>{dish.price} ₽</p>
               </div>
               <div className={style.cart_item_actions}>
-              {dish.available 
-              ? <Progress size={50} type="circle" percent={100} status="success"/>
-              : <Progress size={50} type="circle" percent={100} status="exception"/>}
+              {dish.stop_list || !dish.available
+              ? <Progress size={50} type="circle" percent={100} status="exception"/>
+              : <Progress size={50} type="circle" percent={100} status="success"/>}
               <DishEditButton setIsModalOpen={setIsModalOpen}/>
               </div>
             </div>
