@@ -40,6 +40,17 @@
     color: #333;
 }
 
+.cart_item_actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.status_circle {
+    height: 50px;
+    width: 50px;
+}
+
 .edit_buttons {
     display: flex;
     flex-direction: column;

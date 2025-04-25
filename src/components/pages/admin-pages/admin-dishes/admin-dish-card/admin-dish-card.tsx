@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import style from './admin-dish-card.module.css';
-import { Button, Modal } from "antd";
+import { Button, Modal, Progress } from "antd";
 import { IDish } from "../../../../../types/dish-types";
 import DishEditForm from "../admin-dish-edit-modal/admin-dish-edit-modal";
 
@@ -60,10 +60,11 @@ export const AdminDishCard: React.FC<IDishCardProps> = ({ dish }) => {
                 <span className={style.cart_item_desc}>{dish.description}</span>                            
                 <p className={style.cart_item_price}>{dish.price} ₽</p>
               </div>
-              <div className={style.cart_item_actions}>                                                           
-                { !dish.available ? 
-                <Button className={style.cart_button_green} type="primary">Вернуть в меню</Button>
-                : <DishEditButton setIsModalOpen={setIsModalOpen}/>}
+              <div className={style.cart_item_actions}>
+              {dish.available 
+              ? <Progress size={50} type="circle" percent={100} status="success"/>
+              : <Progress size={50} type="circle" percent={100} status="exception"/>}
+              <DishEditButton setIsModalOpen={setIsModalOpen}/>
               </div>
             </div>
     );

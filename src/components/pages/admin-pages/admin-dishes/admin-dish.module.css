@@ -14,3 +14,11 @@
     background-color: rgba(84, 128, 20, 0.61);
     margin-bottom: 20px;
 }
+
+.error_container {
+    padding: 2rem;
+    background-color: rgba(231, 76, 60, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    color: #e74c3c;
+}
