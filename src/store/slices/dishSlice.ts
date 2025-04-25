@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_GET_ALL_DISH } from '../../utils/api-constant';
+import { API_ADMIN_ADD_DISH, API_GET_ALL_DISH } from '../../utils/api-constant';
 import { IDish, IDishesResponse, IDishesState } from '../../types/dish-types'
 import { IApiError } from '../../types/other-types';
 import { RootState } from '../store';
@@ -33,6 +33,30 @@ export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiErr
     }
   }
 );
+
+
+export const addDish = createAsyncThunk<IDish, DishUpdateData, { rejectValue: IApiError }>(
+  'dish/addDish',
+  async (dishData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<IDish>(API_ADMIN_ADD_DISH, dishData);
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка при добавлении блюда:', error);
+      if (!axios.isAxiosError(error)) {
+        return rejectWithValue({ message: 'Неизвестная ошибка' });
+      }
+      if (!error.response) {
+        return rejectWithValue({ message: 'Нет соединения с сервером' });
+      }
+      return rejectWithValue({
+        status: error.response.status,
+        message: error.response.data?.message || 'Ошибка при добавлении блюда'
+      });
+    }
+  }
+);
+
 
 
 interface DishUpdateData {
@@ -121,6 +145,18 @@ const dishSlice = createSlice({
       .addCase(updateDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isLoading = false;
         state.error = action.payload || { message: 'Ошибка при обновлении блюда' };
+      })
+      .addCase(addDish.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(addDish.fulfilled, (state, action: PayloadAction<IDish>) => {
+        state.isLoading = false;
+        state.dishes = [...state.dishes, action.payload];
+      })
+      .addCase(addDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
+        state.isLoading = false;
+        state.error = action.payload || { message: 'Ошибка при добавлении блюда' };
       });
   }
 });
