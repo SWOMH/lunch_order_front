@@ -70,7 +70,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
       
       <div className="dish-image-container">
         <img 
-          src={dish.image || 'https://www.krestianin.ru/sites/default/files/title_image/2015-02/157.jpg'} 
+          src={dish.image || 'https://cdn.arora.pro/a/upload/7fd79306-b3c8-4bdc-9a68-2521e0a9a65f/file_manager/theme/theme-pizzapub/no-photo-standart.jpg?webp'} 
           alt={dish.name} 
           className="dish-image" 
         />
