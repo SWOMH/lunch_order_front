@@ -30,7 +30,10 @@ export interface IDish {
 
 export interface IDishesState {
     dishes: IDish[];
+    admin_dish: IDish[];
     isLoading: boolean;
+    isAdminLoading: boolean;
     isLoaded: boolean;
+    isAdminLoaded: boolean;
     error: string | IApiError | null;
   }

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_ADMIN_ADD_DISH, API_GET_ALL_DISH } from '../../utils/api-constant';
+import { API_ADMIN_ADD_DISH, API_ADMIN_GET_ALL_DISH, API_GET_ALL_DISH } from '../../utils/api-constant';
 import { IDish, IDishesResponse, IDishesState } from '../../types/dish-types'
 import { IApiError } from '../../types/other-types';
 import { RootState } from '../store';
@@ -17,6 +17,35 @@ export const getAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiErr
 
     try {
       const response = await axios.get<IDishesResponse>(API_GET_ALL_DISH);
+      return response.data.dishes;
+    } catch (error) {
+      console.error('Ошибка запроса:', error);
+      if (!axios.isAxiosError(error)) {
+        return rejectWithValue({ message: 'Неизвестная ошибка' });
+      }
+      if (!error.response) {
+        return rejectWithValue({ message: 'Нет соединения с сервером' });
+      }
+      return rejectWithValue({
+        status: error.response.status,
+        message: error.response.data?.message || 'Ошибка при загрузке блюд'
+      });
+    }
+  }
+);
+
+// тоже такое себе решение. Санчала думал разделять все слайсы на обычные и админские, но пока оставлю так
+// нет ничего более вечного, чем временное
+export const adminGetAllDish = createAsyncThunk<IDish[], void, { rejectValue: IApiError }>(
+  'dish/adminGetAllDish',
+  async (_, {getState, rejectWithValue }) => {
+    const { dish } = getState() as RootState
+    if (dish.isLoaded) {
+      return dish.admin_dish;
+    }
+
+    try {
+      const response = await axios.get<IDishesResponse>(API_ADMIN_GET_ALL_DISH);
       return response.data.dishes;
     } catch (error) {
       console.error('Ошибка запроса:', error);
@@ -102,8 +131,11 @@ export const updateDish = createAsyncThunk<IDish, { dishId: number; dishData: Di
 
 const initialState: IDishesState = {
     dishes: [],
+    admin_dish: [],
     isLoading: false,
+    isAdminLoading: false,
     isLoaded: false,
+    isAdminLoaded: false,
     error: null,
 };
 
@@ -132,6 +164,21 @@ const dishSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload || { message: 'Неизвестная ошибка' };
       })
+      .addCase(adminGetAllDish.pending, (state) => {
+        if (!state.isAdminLoaded) {
+          state.isAdminLoading = true;
+          state.error = null;
+        }
+      })
+      .addCase(adminGetAllDish.fulfilled, (state, action: PayloadAction<IDish[]>) => {
+        state.isAdminLoading = false;
+        state.admin_dish = [...action.payload];
+        state.isAdminLoaded = true;
+      })
+      .addCase(adminGetAllDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
+        state.isLoading = false;
+        state.error = action.payload || { message: 'Неизвестная ошибка' };
+      })
       .addCase(updateDish.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -139,6 +186,9 @@ const dishSlice = createSlice({
       .addCase(updateDish.fulfilled, (state, action: PayloadAction<IDish>) => {
         state.isLoading = false;
         state.dishes = state.dishes.map(dish => 
+          dish.id === action.payload.id ? action.payload : dish
+        );
+        state.admin_dish = state.admin_dish.map(dish =>
           dish.id === action.payload.id ? action.payload : dish
         );
       })
@@ -153,6 +203,7 @@ const dishSlice = createSlice({
       .addCase(addDish.fulfilled, (state, action: PayloadAction<IDish>) => {
         state.isLoading = false;
         state.dishes = [...state.dishes, action.payload];
+        state.admin_dish = [...state.admin_dish, action.payload];
       })
       .addCase(addDish.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isLoading = false;
