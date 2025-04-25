@@ -5,6 +5,8 @@ import { createSelector } from '@reduxjs/toolkit';
 // Получение всех блюд
 export const selectAllDishes = (state: RootState): IDish[] => state.dish.dishes;
 
+export const selectAdminAllDishes = (state: RootState): IDish[] => state.dish.admin_dish;
+
 // Группированные блюда по типу блюда
 export const selectGroupedDishes = createSelector(
   selectAllDishes,
