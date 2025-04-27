@@ -8,15 +8,13 @@ import { DishCard } from './dish/dish-card';
 import { selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import { Link } from 'react-router-dom';
 import { IDish } from '../../../types/dish-types';
-import { Button, Divider, Segmented } from 'antd';
-import { selectUserIsAdmin } from '../../../store/selectors/user/userSelectors';
-
+import { Button, Divider, Segmented, AutoComplete, Input } from 'antd';
 
 export const DishesPage = React.memo(() => {
   const dispatch = useAppDispatch();
-
   const [selectedType, setSelectedType] = useState<string>('Все');
-  const dishes = useAppSelector(selectAllDishes);
+  const [searchQuery, setSearchQuery] = useState('');
+  const allDishes = useAppSelector(selectAllDishes);
   const groupedDishes = useAppSelector(selectGroupedDishes);
   const isLoading = useAppSelector(selectDishesLoading);
   const error = useAppSelector(selectDishesError);
@@ -24,6 +22,52 @@ export const DishesPage = React.memo(() => {
   const typeRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const isLoaded = useAppSelector(state => state.dish.isLoaded);
 
+  // Фильтрация блюд по поисковому запросу
+  const filterDishes = (dishes: IDish[]) => {
+    if (!searchQuery.trim()) return dishes;
+    return dishes.filter(dish => 
+      dish.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+      || (dish.description && dish.description.toLowerCase().includes(searchQuery.toLowerCase())))
+  };
+
+  const getFilteredGroupedDishes = () => {
+    const result: Record<string, IDish[]> = {};
+    
+    if (selectedType === 'Все') {
+      Object.entries(groupedDishes).forEach(([type, dishes]) => {
+        const filtered = filterDishes(dishes);
+        if (filtered.length > 0) {
+          result[type] = filtered;
+        }
+      });
+    } else {
+      const filtered = filterDishes(groupedDishes[selectedType] || []);
+      if (filtered.length > 0) {
+        result[selectedType] = filtered;
+      }
+    }
+    
+    return result;
+  };
+
+  const filteredGroupedDishes = getFilteredGroupedDishes();
+
+  const autoCompleteOptions = allDishes
+    .map(dish => ({
+      value: dish.name,
+      label: dish.name,
+    }))
+    .filter((option, index, self) =>
+      index === self.findIndex(o => o.value === option.value)
+    );
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+  };
+
+  const handleSelect = (value: string) => {
+    setSearchQuery(value);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -63,12 +107,9 @@ export const DishesPage = React.memo(() => {
       </div>
     );
   }
-  // @ts-ignore
-  const dishesArray: IDish[] = dishes?.dishes || dishes || [];
 
-  const allTypes = Array.from(new Set(dishesArray.map(d => d.type)));
+  const allTypes = Array.from(new Set(allDishes.map(d => d.type)));
   const options = ['Все', ...allTypes];
-
 
   return (
     <div className="dishes-page">
@@ -80,31 +121,46 @@ export const DishesPage = React.memo(() => {
           value={selectedType}
         />
       </div>
-        {selectedType === 'Все' ? (
-            Object.entries(groupedDishes).map(([type, dishes]) => (
-              <div key={type} ref={el => typeRefs.current[type] = el}>
-                <Divider orientation="left">{type}</Divider>
-                <div className="dishes-grid">
-                  {dishes.map(dish => (
-                    <div className="dish-grid-item" key={dish.id}>
-                      <DishCard dish={dish} />
-                    </div>
-                  ))}
+
+
+      <div className="search_container">
+        <AutoComplete
+          options={autoCompleteOptions}
+          style={{ width: '100%', maxWidth: '500px' }}
+          onSearch={handleSearch}
+          onSelect={handleSelect}
+          placeholder="Поиск блюда..."
+          filterOption={(inputValue, option) =>
+            option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+          }
+        >
+          <Input.Search 
+            size="large" 
+            allowClear 
+            enterButton 
+          />
+        </AutoComplete>
+      </div>
+      {Object.keys(filteredGroupedDishes).length > 0 ? (
+        Object.entries(filteredGroupedDishes).map(([type, dishes]) => (
+          <div key={type} ref={el => typeRefs.current[type] = el}>
+            <Divider orientation="left">{type}</Divider>
+            <div className="dishes-grid">
+              {dishes.map(dish => (
+                <div className="dish-grid-item" key={dish.id}>
+                  <DishCard dish={dish} />
                 </div>
-              </div>
-            ))
-          ) : (
-            <div ref={el => typeRefs.current[selectedType] = el}>
-              <Divider orientation="left">{selectedType}</Divider>
-              <div className="dishes-grid">
-                {groupedDishes[selectedType]?.map(dish => (
-                  <div className="dish-grid-item" key={dish.id}>
-                    <DishCard dish={dish} />
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
-          )}
+          </div>
+        ))
+      ) : (
+        <div className="no_results">
+          {searchQuery 
+            ? `Блюда по запросу "${searchQuery}" не найдены` 
+            : 'Нет доступных блюд в выбранной категории'}
+        </div>
+      )}
       
       {totalCartPrice > 0 && (
         <div className="cart-info">
