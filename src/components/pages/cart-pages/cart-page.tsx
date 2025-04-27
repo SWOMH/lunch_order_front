@@ -1,14 +1,16 @@
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addToCart, clearCart, removeFromCart } from '../../../store/slices/orderingSlice';
+import { addToCart, clearCart, createOrder, removeFromCart } from '../../../store/slices/orderingSlice';
 import { selectCartCounts, selectCartDishes, selectTotalCartPrice } from '../../../store/selectors/order/orderSelectors';
 import './cart-page.css';
 import { Button, message } from 'antd';
+import { selectUserInfo } from '../../../store/selectors/user/userSelectors';
 
 export const CartPage = () => {
   const dispatch = useAppDispatch();
   const cartDishes = useAppSelector(selectCartDishes);
   const cartCounts = useAppSelector(selectCartCounts);
   const totalPrice = useAppSelector(selectTotalCartPrice);
+  const user = useAppSelector(selectUserInfo);
 
   const [messageApi, contextHolder] = message.useMessage();
   const key = 'updatable';
@@ -26,19 +28,23 @@ export const CartPage = () => {
   };
   
   const handleCheckout = () => {
-    messageApi.open({
-      key,
-      type: 'loading',
-      content: 'Оформление...',
-    });
-    setTimeout(() => {
-      messageApi.open({
-        key,
-        type: 'success',
-        content: 'Заказ оформлен!',
-        duration: 2,
+    if (!user) {
+      messageApi.error('Необходимо авторизоваться');
+      return;
+    }
+    
+    messageApi.loading('Оформление заказа...', 0);
+    
+    dispatch(createOrder(user.telegram_id))
+      .unwrap()
+      .then(() => {
+        messageApi.destroy();
+        messageApi.success('Заказ успешно оформлен!');
+      })
+      .catch((error) => {
+        messageApi.destroy();
+        messageApi.error(`Ошибка оформления: ${error.message || 'Неизвестная ошибка'}`);
       });
-    }, 1000);
   };
   
   if (cartDishes.length === 0) {
@@ -126,9 +132,16 @@ export const CartPage = () => {
           <div className="cart-total-value">{totalPrice} ₽</div>
         </div>
         {contextHolder}
-        <button className="checkout-button" onClick={handleCheckout}>
+        <button 
+          className="checkout-button" 
+          onClick={handleCheckout}
+          disabled={!user} // Делаем кнопку неактивной если пользователь не авторизован
+        >
           Оформить заказ
         </button>
+        {!user && (
+          <p className="auth-warning">Для оформления заказа необходимо авторизоваться</p>
+        )}
       </div>
     </div>
   );

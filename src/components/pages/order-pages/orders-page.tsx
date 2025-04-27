@@ -6,16 +6,19 @@ import { selectOrderHistoryError, selectOrderHistoryLoading, selectOrderUserHist
 import { NullOrdersPage } from './null-orders/null-orders';
 import Loader from '../../ui/Loader';
 import { OrderHistoryCard } from './order-card/order-history-card';
+import { selectUserInfo } from '../../../store/selectors/user/userSelectors';
+import { ITelegramId } from '../../../types/user-types';
 
 export const OrdersPage = () => {
   const dispatch = useAppDispatch();
   const orders = useAppSelector(selectOrderUserHistory);
   const isLoading = useAppSelector(selectOrderHistoryLoading);
   const errorLoad = useAppSelector(selectOrderHistoryError);
+  const user = useAppSelector(selectUserInfo)
 
 
-  useEffect(() => {
-    dispatch(getUserOrders('2')) // Для тестов пока прокину хардкодом
+  useEffect(() => {    
+    dispatch(getUserOrders(user?.telegram_id as ITelegramId)) // Для тестов пока прокину хардкодом
   }, [dispatch]);
   
   if (isLoading) {

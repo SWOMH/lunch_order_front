@@ -3,14 +3,31 @@ import axios from 'axios';
 import { IAllOrdersHistory, IBukket, IBukketDish } from '../../types/order-types';
 import { IDish } from '../../types/dish-types';
 import { IApiError } from '../../types/other-types';
-import { API_USER_ALL_ORDERS } from '../../utils/api-constant';
+import { API_URL_ORDER, API_USER_ALL_ORDERS } from '../../utils/api-constant';
+import { RootState } from '../store';
+import { ITelegramId } from '../../types/user-types';
 
 export const createOrder = createAsyncThunk(
   'order/createOrder',
-  async (_, { getState, rejectWithValue }) => {
+  async (telegram_id: ITelegramId, { getState, rejectWithValue }) => {
     try {
-      // Здесь надо будет добавить логику отправки заказа, но добавлю потом 
-      return { success: true };
+      const state = getState() as RootState;
+      const { dish, counts } = state.order;
+      
+      if (!telegram_id) {
+        return rejectWithValue('Не удалось получить telegram_id пользователя');
+      }
+      
+      const orderDishes = dish.map(item => ({
+        dish_id: item.dish_id,
+        count: counts[item.variant_id ? `${item.dish_id}-${item.variant_id}` : `${item.dish_id}`] || 1,
+        variant_id: item.variant_id || null
+      }));
+      const response = await axios.post(API_URL_ORDER, {
+        telegram_id: telegram_id,
+        dishes: orderDishes
+      });
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -21,9 +38,9 @@ interface IOrdersResponse {
   orders: IAllOrdersHistory[];
 }
 
-export const getUserOrders = createAsyncThunk<IAllOrdersHistory[], string, { rejectValue: IApiError }>(
+export const getUserOrders = createAsyncThunk<IAllOrdersHistory[], ITelegramId, { rejectValue: IApiError }>(
   'order/getUserOrders',
-  async (telegramId: string, { rejectWithValue }) => {
+  async (telegramId: ITelegramId, { rejectWithValue }) => {
     try {
       const response = await axios.get<IOrdersResponse>(`${API_USER_ALL_ORDERS}?telegram_id=${telegramId}`);
       return response.data.orders;

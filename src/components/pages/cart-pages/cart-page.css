@@ -206,6 +206,18 @@
   background: #357abd;
 }
 
+.auth-warning {
+  color: #ff4d4f;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.checkout-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Поддержка безопасной зоны на iOS устройствах */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .cart-page {
