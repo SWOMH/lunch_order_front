@@ -40,7 +40,7 @@ export const adminGetAllDish = createAsyncThunk<IDish[], void, { rejectValue: IA
   'dish/adminGetAllDish',
   async (_, {getState, rejectWithValue }) => {
     const { dish } = getState() as RootState
-    if (dish.isLoaded) {
+    if (dish.isAdminLoaded) {
       return dish.admin_dish;
     }
 
