@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_USER_GET_INFO, API_USER_REGISTER } from '../../utils/api-constant';
-import { IUser, AuthState, IRegisterUserData } from '../../types/user-types';
+import { API_ADMIN_GET_ALL_USERS, API_USER_GET_INFO, API_USER_REGISTER } from '../../utils/api-constant';
+import { IUser, AuthState, IRegisterUserData, IAdminUsers, ITelegramId } from '../../types/user-types';
 import { IApiError } from '../../types/other-types'
 
 
@@ -61,13 +61,48 @@ export const registerUser = createAsyncThunk<void, IRegisterUserData, { rejectVa
   }
 );
 
+export const getAdminAllUserInfo = createAsyncThunk<IAdminUsers[], number, { rejectValue: IApiError }>(
+  'auth/getAdminAllUserInfo',
+  async (telegramId: number, { rejectWithValue }) => {
+    try {
+      console.log('Sending data:', { telegram_id: telegramId });
+      const response = await axios.post(API_ADMIN_GET_ALL_USERS, {
+        telegram_id: telegramId
+      });
+      console.log('Response:', response);
+      return response.data.users;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          return rejectWithValue({
+            status: 404,
+            message: 'Неверный URL'
+          });
+        }
+        return rejectWithValue({
+          status: error.response?.status,
+          message: error.message
+        });
+      }
+      return rejectWithValue({
+        message: 'Неизвестная ошибка'
+      });
+    }
+  }
+);
+
 const initialState: AuthState = {
   user: null,
   isLoading: false,
   isRegistered: false,
   error: null,
-  userNotFound: false
+  userNotFound: false,
+  adminUsers: [],
+  isAdminLoading: false,
+  isAdminError: null
 };
+
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -113,6 +148,18 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isLoading = false;
         state.error = action.payload || { message: 'Неизвестная ошибка' };
+      })
+      .addCase(getAdminAllUserInfo.pending, (state) => {
+        state.isAdminLoading = true;
+        state.isAdminError = null;
+      })
+      .addCase(getAdminAllUserInfo.fulfilled, (state, action: PayloadAction<IAdminUsers[]>) => {
+        state.isAdminLoading = false;
+        state.adminUsers = action.payload;
+      })
+      .addCase(getAdminAllUserInfo.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
+        state.isAdminLoading = false;
+        state.isAdminError = action.payload || { message: 'Неизвестная ошибка' };
       });
   }
 });
