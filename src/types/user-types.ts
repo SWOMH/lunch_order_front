@@ -14,6 +14,14 @@ export interface IUser{
     admin: boolean;
 }
 
+export interface IAdminUsers {
+    id: number;
+    name: string;
+    telegram_name?: string;
+    telegram_username?: string;
+    banned: boolean;
+}
+
 
 export interface AuthState {
     user: IUser | null;
@@ -21,6 +29,9 @@ export interface AuthState {
     isRegistered: boolean;
     error: string | IApiError | null;
     userNotFound: boolean;
+    adminUsers: IAdminUsers[];
+    isAdminLoading: boolean;
+    isAdminError: string | IApiError | null;
 }
 
 export interface IRegisterUserData {
