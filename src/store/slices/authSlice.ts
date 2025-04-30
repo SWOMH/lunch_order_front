@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_ADMIN_GET_ALL_USERS, API_USER_GET_INFO, API_USER_REGISTER } from '../../utils/api-constant';
+import { API_ADMIN_EDIT_USER_STATUS, API_ADMIN_GET_ALL_USERS, API_USER_GET_INFO, API_USER_REGISTER } from '../../utils/api-constant';
 import { IUser, AuthState, IRegisterUserData, IAdminUsers, ITelegramId } from '../../types/user-types';
 import { IApiError } from '../../types/other-types'
+import { RootState } from '../store';
 
 
 
@@ -65,11 +66,9 @@ export const getAdminAllUserInfo = createAsyncThunk<IAdminUsers[], number, { rej
   'auth/getAdminAllUserInfo',
   async (telegramId: number, { rejectWithValue }) => {
     try {
-      console.log('Sending data:', { telegram_id: telegramId });
       const response = await axios.post(API_ADMIN_GET_ALL_USERS, {
         telegram_id: telegramId
       });
-      console.log('Response:', response);
       return response.data.users;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -77,6 +76,32 @@ export const getAdminAllUserInfo = createAsyncThunk<IAdminUsers[], number, { rej
           return rejectWithValue({
             status: 404,
             message: 'Неверный URL'
+          });
+        }
+        return rejectWithValue({
+          status: error.response?.status,
+          message: error.message
+        });
+      }
+      return rejectWithValue({
+        message: 'Неизвестная ошибка'
+      });
+    }
+  }
+);
+
+export const adminEditUserStatus = createAsyncThunk<void, number, { rejectValue: IApiError }>(
+  'auth/adminEditUserStatus',
+  async (user_telegram_id: number, { getState, rejectWithValue }) => {
+    try {
+      const { user } = getState() as RootState; 
+      await axios.post(`${API_ADMIN_EDIT_USER_STATUS}?telegram_id_admin=${user.user?.telegram_id}&telegram_id_user=${user_telegram_id}`);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          return rejectWithValue({
+            status: 404,
+            message: 'Пользователь не найден'
           });
         }
         return rejectWithValue({
@@ -99,7 +124,9 @@ const initialState: AuthState = {
   userNotFound: false,
   adminUsers: [],
   isAdminLoading: false,
-  isAdminError: null
+  isAdminError: null,
+  adminEditUserStatusLoading: false,
+  adminEditUserStatusError: null
 };
 
 
@@ -160,6 +187,21 @@ const authSlice = createSlice({
       .addCase(getAdminAllUserInfo.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
         state.isAdminLoading = false;
         state.isAdminError = action.payload || { message: 'Неизвестная ошибка' };
+      })
+      .addCase(adminEditUserStatus.pending, (state) => {
+        state.adminEditUserStatusLoading = true;
+        state.adminEditUserStatusError = null;
+      })
+      .addCase(adminEditUserStatus.fulfilled, (state, action) => {
+        state.adminEditUserStatusLoading = false;
+        const userIndex = state.adminUsers.findIndex(user => user.telegram_id === action.meta.arg);
+        if (userIndex !== -1) {
+          state.adminUsers[userIndex].banned = !state.adminUsers[userIndex].banned;
+        }
+      })
+      .addCase(adminEditUserStatus.rejected, (state, action: PayloadAction<IApiError | undefined>) => {
+        state.adminEditUserStatusLoading = false;
+        state.adminEditUserStatusError = action.payload || { message: 'Неизвестная ошибка' };
       });
   }
 });

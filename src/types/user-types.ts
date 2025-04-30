@@ -16,6 +16,7 @@ export interface IUser{
 
 export interface IAdminUsers {
     id: number;
+    telegram_id: number;
     name: string;
     telegram_name?: string;
     telegram_username?: string;
@@ -32,6 +33,8 @@ export interface AuthState {
     adminUsers: IAdminUsers[];
     isAdminLoading: boolean;
     isAdminError: string | IApiError | null;
+    adminEditUserStatusLoading: boolean;
+    adminEditUserStatusError: string | IApiError | null;
 }
 
 export interface IRegisterUserData {
