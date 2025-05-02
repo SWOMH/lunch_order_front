@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IAllOrdersHistory, IBukket, IBukketDish, IEditOrderResponse, IRemoveDishFromOrder } from '../../types/order-types';
+import { IAllOrdersHistory, IBukket, IBukketDish, IEditOrderResponse, IEditStatisOrder, IRemoveDishFromOrder } from '../../types/order-types';
 import { IDish } from '../../types/dish-types';
 import { IApiError } from '../../types/other-types';
-import { API_ADMIN_URL_ALL_ORDERS, API_REMOVE_DISH_FROM_ORDER, API_URL_ORDER, API_USER_ALL_ORDERS } from '../../utils/api-constant';
+import { API_ADMIN_URL_ALL_ORDERS, API_ADMIN_URL_EDIT_ORDER, API_REMOVE_DISH_FROM_ORDER, API_URL_ORDER, API_USER_ALL_ORDERS } from '../../utils/api-constant';
 import { RootState } from '../store';
 import { ITelegramId } from '../../types/user-types';
 
@@ -69,6 +69,40 @@ export const adminGetUsersActualOrders = createAsyncThunk<IAllOrdersHistory[], I
     }
   }
 );
+
+export const editStatusOrder = createAsyncThunk<
+  {status: string; message: string}, 
+  IEditStatisOrder, 
+  {rejectValue: IApiError}>(
+    'order/editStatusOrder',
+    async (requestData, { rejectWithValue, getState }) => {
+      try {
+        const state = getState() as RootState;
+        const telegram_id = state.user.user?.telegram_id;
+        
+        if (!telegram_id) {
+          return rejectWithValue({
+            message: 'Не удалось получить telegram_id пользователя',
+            status: 401
+          });
+        }
+
+        const response = await axios.post(API_ADMIN_URL_EDIT_ORDER, {
+          telegram_id,
+          order_id: requestData.order_id,
+          new_status: requestData.new_status
+        });
+        
+        return response.data;
+      } catch (error: any) {
+        return rejectWithValue({
+          message: error.response?.data?.message || error.message,
+          status: error.response?.status || 500
+        });
+      }
+    }
+);
+
 
 export const removeDishFromOrder = createAsyncThunk<IEditOrderResponse, IRemoveDishFromOrder, { rejectValue: IApiError }>(
   'order/removeDishFromOrder',
@@ -191,6 +225,23 @@ const orderSlice = createSlice({
       .addCase(adminGetUsersActualOrders.rejected, (state) => {
         state.orderHistoryRequest = false;
         state.orderHistoryFailed = true;
+      })
+      .addCase(editStatusOrder.pending, (state) => {
+        state.editOrderLoading = true;
+        state.editOrderError = null;
+      })
+      .addCase(editStatusOrder.fulfilled, (state, action) => {
+        state.editOrderLoading = false;
+        const orderIndex = state.adminOrderActual.findIndex(
+          o => o.order_id === action.meta.arg.order_id
+        );
+        if (orderIndex !== -1) {
+          state.adminOrderActual[orderIndex].status = action.meta.arg.new_status;
+        }
+      })
+      .addCase(editStatusOrder.rejected, (state, action) => {
+        state.editOrderLoading = false;
+        state.editOrderError = action.payload || { message: 'Неизвестная ошибка' };
       });
   }
 });

@@ -4,7 +4,7 @@ import style from './admin-order-card.module.css'
 import { IAllOrdersHistory } from "../../../../../types/order-types";
 import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
 import { selectUserInfo } from "../../../../../store/selectors/user/userSelectors";
-import { adminGetUsersActualOrders, getUserOrders, removeDishFromOrder } from "../../../../../store/slices/orderingSlice";
+import { adminGetUsersActualOrders, editStatusOrder, getUserOrders, removeDishFromOrder } from "../../../../../store/slices/orderingSlice";
 import { Button } from "antd";
 
 interface IOrderHistoryCard {
@@ -15,6 +15,7 @@ export const AdminOrderCard: React.FC<IOrderHistoryCard> = ({ order }) => {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUserInfo);
     const [removingItems, setRemovingItems] = useState<Set<string>>(new Set());
+    const [isChangingStatus, setIsChangingStatus] = useState(false);
 
     const getStatusClass = (status: string) => {
         switch(status) {
@@ -33,8 +34,24 @@ export const AdminOrderCard: React.FC<IOrderHistoryCard> = ({ order }) => {
         });
     };
 
-    const handleEditOrderStatus = ( order_id: number ) => {
-
+    const handleEditOrderStatus = async (order_id: number) => { // Делать активным снова заказ я не хочу, ибо заказывать можно не в любое
+      // время. А на все это учитывать в работе, которую делаю просто для личного удобства - я не желаю
+      if (!confirm('Вы уверены, что хотите отменить этот заказ?')) return;
+      if (!user?.telegram_id) return;
+      
+      setIsChangingStatus(true);
+      try {
+        await dispatch(editStatusOrder({
+          order_id,
+          new_status: 'canceled'
+        })).unwrap();
+        
+        dispatch(adminGetUsersActualOrders(user.telegram_id));
+      } catch (error) {
+        console.error('Ошибка при изменении статуса:', error);
+      } finally {
+        setIsChangingStatus(false);
+      }
     };
 
     const handleRemoveDish = async (dishId: number, dishName: string, variantId?: number) => {
@@ -63,8 +80,16 @@ export const AdminOrderCard: React.FC<IOrderHistoryCard> = ({ order }) => {
             <span className={style.order_number}>{order.user.full_name} || Заказ #{order.order_id}</span>
             <span className={style.order_date}>{formatDate(order.datetime)}</span>
           </div>
-          { (order.status === 'formalized' || order.status === 'completed') 
-          && <Button danger onClick={() => handleEditOrderStatus(order.order_id)}>Отменить заказ</Button>} 
+          {(order.status === 'formalized' || order.status === 'completed') && (
+            <Button 
+              danger 
+              onClick={() => handleEditOrderStatus(order.order_id)}
+              loading={isChangingStatus}
+              disabled={isChangingStatus}
+            >
+              {isChangingStatus ? 'Отмена...' : 'Отменить заказ'}
+            </Button>
+          )} 
           <span className={`${style.order_status} ${getStatusClass(order.status)}`}>
             {order.status === 'formalized' && 'Оформлен'}
             {order.status === 'completed' && 'Завершен'}

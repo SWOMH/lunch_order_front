@@ -76,3 +76,13 @@ export interface IEditOrderResponse {
   new_amount: number;
   removed: boolean;
 }
+
+export interface IEditStatisOrder {
+  order_id: number;
+  new_status: OrderStatus;
+}
+
+export interface IEditStatusResponse {
+  status: string;
+  message: string;
+}

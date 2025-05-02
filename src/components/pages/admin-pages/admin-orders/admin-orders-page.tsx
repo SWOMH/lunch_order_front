@@ -4,10 +4,10 @@ import { selectAdminActualOrder, selectOrderHistoryError, selectOrderHistoryLoad
 import Loader from '../../../ui/Loader';
 import { selectUserInfo } from '../../../../store/selectors/user/userSelectors';
 import { ITelegramId } from '../../../../types/user-types';
-import { NullOrdersPage } from '../../order-pages/null-orders/null-orders';
 import { AdminOrderCard } from './admin-order-card/admin-order-card';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { adminGetUsersActualOrders, getUserOrders } from '../../../../store/slices/orderingSlice';
+import { AdminNullOrdersPage } from './admin-orders-empty';
 
 export const AdminOrdersPage = () => {
   const dispatch = useAppDispatch();
@@ -34,8 +34,8 @@ export const AdminOrdersPage = () => {
     );
   };
 
-  if (orders.length === 0 || orders.every(order => order.items.length === 0)) {
-    return <NullOrdersPage />;
+  if (!orders || !Array.isArray(orders) || orders.length === 0 || orders.every(order => !order.items || order.items.length === 0)) {
+    return <AdminNullOrdersPage />;
   }
 
   return (

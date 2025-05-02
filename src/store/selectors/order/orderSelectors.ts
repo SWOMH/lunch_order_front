@@ -70,7 +70,7 @@ export const selectOrderError = (state: RootState): boolean => state.order.order
 // Селектор для получения данных о заказах по определенному человеку
 export const selectOrderUserHistory = (state: RootState): IAllOrdersHistory[] => state.order.orderHistory; 
 
-export const selectAdminActualOrder = (state: RootState): IAllOrdersHistory[] => state.order.adminOrderActual; 
+export const selectAdminActualOrder = (state: RootState): IAllOrdersHistory[] => state.order.adminOrderActual || []; 
 
 export const selectOrderHistoryLoading = (state: RootState): boolean => state.order.orderHistoryRequest;
 

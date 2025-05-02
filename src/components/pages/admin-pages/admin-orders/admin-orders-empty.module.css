@@ -1,0 +1,33 @@
+.orders_page {
+  padding-bottom: 1rem;
+}
+
+.page_title {
+  color: #333;
+}
+
+.orders_empty_state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.orders_icon {
+  margin-bottom: 1rem;
+}
+
+.empty_text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.empty_desc {
+  color: #888;
+  font-size: 0.875rem;
+}
