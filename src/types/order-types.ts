@@ -1,4 +1,5 @@
 import { IDish } from './dish-types';
+import { IApiError } from './other-types';
 import { ITelegramId } from './user-types';
 
 interface IUserRequestOrderHistory {
@@ -41,8 +42,11 @@ export interface IBukket {
   orderRequest: boolean;
   orderFailed: boolean;
   orderHistory: IAllOrdersHistory[];
+  adminOrderActual: IAllOrdersHistory[];
   orderHistoryRequest: boolean;
   orderHistoryFailed: boolean;
+  editOrderLoading: boolean;
+  editOrderError: IApiError | null;
 }
 
 export interface IOrderInfo {
@@ -58,4 +62,17 @@ export interface IOrderItem {
   name: string;
   price: number;
   count: number;
+}
+
+export interface IRemoveDishFromOrder {
+  telegram_id: number;
+  order_id: number;
+  dish_id: number;
+  variant_id?: number;
+}
+
+export interface IEditOrderResponse {
+  order_id: number;
+  new_amount: number;
+  removed: boolean;
 }

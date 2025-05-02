@@ -23,3 +23,4 @@ export const API_ADMIN_URL_EDIT_ORDER = `${API_URL_HOST}/order/edit_status`
 export const API_ADMIN_GET_ALL_DISH = `${API_URL_HOST}/dish/all_dish`
 export const API_ADMIN_ADD_DISH = `${API_URL_HOST}/dish/add`
 export const API_ADMIN_EDIT_DISH = `${API_URL_HOST}/dish/update` // put запрос в url передать id dish
+export const API_REMOVE_DISH_FROM_ORDER = `${API_URL_HOST}/order/remove_dish_from_order`;

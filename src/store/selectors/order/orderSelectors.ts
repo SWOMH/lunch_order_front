@@ -58,6 +58,9 @@ export const selectTotalCartPrice = (state: RootState): number => {
   }, 0);
 };
 
+export const selectEditOrderLoading = (state: RootState) => state.order.editOrderLoading;
+export const selectEditOrderError = (state: RootState) => state.order.editOrderError;
+
 // Селектор для получения статуса загрузки заказа
 export const selectOrderLoading = (state: RootState): boolean => state.order.orderRequest;
 
@@ -66,6 +69,8 @@ export const selectOrderError = (state: RootState): boolean => state.order.order
 
 // Селектор для получения данных о заказах по определенному человеку
 export const selectOrderUserHistory = (state: RootState): IAllOrdersHistory[] => state.order.orderHistory; 
+
+export const selectAdminActualOrder = (state: RootState): IAllOrdersHistory[] => state.order.adminOrderActual; 
 
 export const selectOrderHistoryLoading = (state: RootState): boolean => state.order.orderHistoryRequest;
 

@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IAllOrdersHistory, IBukket, IBukketDish } from '../../types/order-types';
+import { IAllOrdersHistory, IBukket, IBukketDish, IEditOrderResponse, IRemoveDishFromOrder } from '../../types/order-types';
 import { IDish } from '../../types/dish-types';
 import { IApiError } from '../../types/other-types';
-import { API_URL_ORDER, API_USER_ALL_ORDERS } from '../../utils/api-constant';
+import { API_ADMIN_URL_ALL_ORDERS, API_REMOVE_DISH_FROM_ORDER, API_URL_ORDER, API_USER_ALL_ORDERS } from '../../utils/api-constant';
 import { RootState } from '../store';
 import { ITelegramId } from '../../types/user-types';
 
@@ -53,6 +53,38 @@ export const getUserOrders = createAsyncThunk<IAllOrdersHistory[], ITelegramId, 
   }
 );
 
+export const adminGetUsersActualOrders = createAsyncThunk<IAllOrdersHistory[], ITelegramId, { rejectValue: IApiError }>(
+  'order/adminGetUsersActualOrders',
+  async (telegramId: ITelegramId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<IOrdersResponse>(`${API_ADMIN_URL_ALL_ORDERS}`, {
+        telegram_id: telegramId
+      });
+      return response.data.orders;
+    } catch (error: any) {
+      return rejectWithValue({
+        message: error.response?.data?.message || error.message,
+        status: error.response?.status
+      });
+    }
+  }
+);
+
+export const removeDishFromOrder = createAsyncThunk<IEditOrderResponse, IRemoveDishFromOrder, { rejectValue: IApiError }>(
+  'order/removeDishFromOrder',
+  async (requestData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(API_REMOVE_DISH_FROM_ORDER, requestData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue({
+        message: error.response?.data?.message || error.message,
+        status: error.response?.status
+      });
+    }
+  }
+);
+
 
 const initialState: IBukket = {
   dish: [], //[{dish: 1, variant: 1}, {...}]
@@ -60,8 +92,11 @@ const initialState: IBukket = {
   orderRequest: false,
   orderFailed: false,
   orderHistory: [], // Нужно будет на беке сделать разделение исторических заказов на актуальные и не актуальные, а не разделять все на 2 эндпоинта
+  adminOrderActual: [],
   orderHistoryRequest: false,
-  orderHistoryFailed: false
+  orderHistoryFailed: false,
+  editOrderLoading: false,
+  editOrderError: null
 };
 
 const orderSlice = createSlice({
@@ -131,6 +166,29 @@ const orderSlice = createSlice({
         state.orderHistory = action.payload;
       })
       .addCase(getUserOrders.rejected, (state) => {
+        state.orderHistoryRequest = false;
+        state.orderHistoryFailed = true;
+      })
+      .addCase(removeDishFromOrder.pending, (state) => {
+        state.editOrderLoading = true;
+        state.editOrderError = null;
+      })
+      .addCase(removeDishFromOrder.fulfilled, (state, action) => {
+        state.editOrderLoading = false;
+      })
+      .addCase(removeDishFromOrder.rejected, (state, action) => {
+        state.editOrderLoading = false;
+        state.editOrderError = action.payload || { message: 'Неизвестная ошибка' };
+      })
+      .addCase(adminGetUsersActualOrders.pending, (state) => {
+        state.orderHistoryRequest = true;
+        state.orderHistoryFailed = false;
+      })
+      .addCase(adminGetUsersActualOrders.fulfilled, (state, action: PayloadAction<IAllOrdersHistory[]>) => {
+        state.orderHistoryRequest = false;
+        state.adminOrderActual = action.payload;
+      })
+      .addCase(adminGetUsersActualOrders.rejected, (state) => {
         state.orderHistoryRequest = false;
         state.orderHistoryFailed = true;
       });

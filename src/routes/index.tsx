@@ -7,6 +7,7 @@ import App from '../App';
 import { AdminMainMenu } from '../components/pages/admin-pages/admin-main-menu';
 import { AdminDishPage } from '../components/pages/admin-pages/admin-dishes/admin-dish';
 import { AdminUsersPage } from '../components/pages/admin-pages/admin-users/admin-users';
+import { AdminOrdersPage } from '../components/pages/admin-pages/admin-orders/admin-orders-page';
 
 export const routes: RouteObject[] = [
   {
@@ -46,6 +47,10 @@ export const routes: RouteObject[] = [
           {
             path: 'dish',
             element: <AdminDishPage />
+          },
+          {
+            path: 'orders',
+            element: <AdminOrdersPage />
           },
           {
             path: 'users',
