@@ -1,0 +1,117 @@
+import React, { FC, useState } from "react";
+
+import style from './admin-order-card.module.css'
+import { IAllOrdersHistory } from "../../../../../types/order-types";
+import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
+import { selectUserInfo } from "../../../../../store/selectors/user/userSelectors";
+import { adminGetUsersActualOrders, getUserOrders, removeDishFromOrder } from "../../../../../store/slices/orderingSlice";
+import { Button } from "antd";
+
+interface IOrderHistoryCard {
+    order: IAllOrdersHistory;
+}
+
+export const AdminOrderCard: React.FC<IOrderHistoryCard> = ({ order }) => {
+    const dispatch = useAppDispatch();
+    const user = useAppSelector(selectUserInfo);
+    const [removingItems, setRemovingItems] = useState<Set<string>>(new Set());
+
+    const getStatusClass = (status: string) => {
+        switch(status) {
+            case 'formalized': return style.status_processing;
+            case 'completed': return style.status_completed;
+            case 'canceled': case 'deleted': return style.status_cancelled;
+            default: return style.status_pending;
+        }
+    };
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    };
+
+    const handleEditOrderStatus = ( order_id: number ) => {
+
+    };
+
+    const handleRemoveDish = async (dishId: number, dishName: string, variantId?: number) => {
+        if (!confirm(`Удалить "${dishName}" из заказа?`) || !user?.telegram_id) return;
+      
+        try {
+          await dispatch(removeDishFromOrder({ //@ts-ignore
+            telegram_id: user.telegram_id,
+            order_id: order.order_id,
+            dish_id: dishId,
+            variant_id: variantId
+          })).unwrap();
+          
+          dispatch(adminGetUsersActualOrders(user.telegram_id));
+        } catch (error) {
+          console.error('Ошибка при удалении:', error);
+        }
+      };
+  
+    const canEditOrder = ['formalized', 'unknown'].includes(order.status);
+  
+    return (
+      <div className={style.order_card}>
+        <div className={style.order_header}>
+          <div>
+            <span className={style.order_number}>{order.user.full_name} || Заказ #{order.order_id}</span>
+            <span className={style.order_date}>{formatDate(order.datetime)}</span>
+          </div>
+          { (order.status === 'formalized' || order.status === 'completed') 
+          && <Button danger onClick={() => handleEditOrderStatus(order.order_id)}>Отменить заказ</Button>} 
+          <span className={`${style.order_status} ${getStatusClass(order.status)}`}>
+            {order.status === 'formalized' && 'Оформлен'}
+            {order.status === 'completed' && 'Завершен'}
+            {order.status === 'canceled' && 'Отменен'}
+            {order.status === 'deleted' && 'Удален'}
+          </span>
+        </div>
+  
+        <div className={style.order_items}>
+        {order.items.map(item => {
+            const itemKey = item.variant?.id 
+            ? `${item.dish_id}-${item.variant.id}` 
+            : `${item.dish_id}`;
+            const isRemoving = removingItems.has(itemKey);
+              
+            return (
+                <div 
+                key={`${order.order_id}-${itemKey}-${isRemoving ? 'removing' : 'normal'}`}
+                className={`${style.order_item} ${isRemoving ? style.removing : ''}`}
+              >
+                <div className={style.item_info}>
+                  <span className={style.order_number}>
+                    {item.dish_name}
+                    {item.variant ? ` ${item.variant.size}` : null}
+                    {item.count > 1 && ` × ${item.count}`}
+                  </span>
+                  <span>{item.price * item.count} ₽</span>
+                </div>
+                
+                {canEditOrder && (
+                  <button 
+                    className={style.remove_button}
+                    onClick={() => handleRemoveDish(item.dish_id, item.dish_name, item.variant?.id)}
+                    disabled={removingItems.has(itemKey)}
+                  >
+                    {removingItems.has(itemKey) ? 'Удаление...' : '×'}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+  
+        <div className={style.order_total}>
+          <span>Итого:</span>
+          <span>{order.amount} ₽</span>
+        </div>
+      </div>
+    );
+};

@@ -16,7 +16,7 @@ export const AdminMainMenu = () => {
                         Блюда
                     </div>
                 </div>
-                <div className={style.list_item} onClick={() => {}}>                    
+                <div className={style.list_item} onClick={() => navigate('/admin/orders')}>                    
                     <EyeOutlined style={{ fontSize: '36px', color: '#08c' }}/>
                     <div className={style.card_title}>
                         Заказы
