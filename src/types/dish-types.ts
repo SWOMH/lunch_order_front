@@ -2,6 +2,7 @@ import { IApiError } from "./other-types";
 
 export interface IVariants {
     id: number;
+    id_iiko: number;
     size: string;
     price: number;
 }
@@ -14,6 +15,7 @@ export interface IDishesResponse {
 export interface IDish {
     id: number;
     _id: string;
+    id_iiko: number | null;
     name: string;
     description: string | null;
     price: number | null;

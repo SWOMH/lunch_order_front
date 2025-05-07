@@ -59,12 +59,11 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
     <div className={`dish-card ${!dish.available || dish.stop_list ? 'dish-unavailable' : ''}`}>
       {totalCount > 0 && <span className="dish-count">{totalCount}</span>}
 
-      <Modal title="Подробности"
-      footer={
-        <Button type='primary'
-        onClick={handleCancel}>Закрыть</Button>
-      }
-      open={isModalOpen}>
+      <Modal title="Подробности"       
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+        width={800}>
         <DishDetails dish={dish}></DishDetails>
       </Modal>
       

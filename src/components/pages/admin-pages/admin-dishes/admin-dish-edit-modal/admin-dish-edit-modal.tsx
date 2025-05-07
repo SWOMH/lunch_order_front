@@ -18,7 +18,7 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
     const [variants, setVariants] = useState<IVariants[]>(dish.variants || []);
-    const [currentVariant, setCurrentVariant] = useState<Partial<IVariants>>({ size: '', price: 0 });    
+    const [currentVariant, setCurrentVariant] = useState<Partial<IVariants>>({ size: '', price: 0, id_iiko: 0 });    
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,13 +32,18 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
 
     const handleAddVariant = () => {
         if (currentVariant.size && currentVariant.price !== undefined) {
+            if (currentVariant.id_iiko === undefined) {
+                alert('Пожалуйста, укажите ID iiko для варианта');
+                return;
+            }
         const newVariant = {
             id: Date.now(), // временный id
+            id_iiko: currentVariant.id_iiko,
             size: currentVariant.size,
             price: currentVariant.price
         };
         setVariants([...variants, newVariant]);
-        setCurrentVariant({ size: '', price: 0 });
+        setCurrentVariant({ size: '', price: 0, id_iiko: 0 });
         form.setFieldsValue({ variants: [...variants, newVariant] });
         }
     };
@@ -63,6 +68,7 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
         try {
           const dishData = {
             dish_name: values.name,
+            id_iiko: values.id_iiko,
             description: values.description || '',
             price: values.price === '' ? null : values.price,
             available: values.available,
@@ -74,6 +80,7 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
             variants: variants.length > 0 
               ? variants.map(v => ({
                   dish_id: dish.id,
+                  id_iiko: v.id_iiko,
                   size: v.size,
                   price: v.price
                 }))
@@ -106,6 +113,14 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
             label="Название блюда"
             name="name"
             rules={[{ required: true, message: 'Пожалуйста, введите название' }]}
+        >
+            <Input />
+        </Form.Item>
+
+        <Form.Item
+            label="ID блюда в iiko"
+            name="id_iiko"
+            rules={[{ required: true, message: 'Пожалуйста, введите id из iiko' }]}
         >
             <Input />
         </Form.Item>
@@ -216,17 +231,26 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
         <div style={{ marginBottom: 16 }}>
             <Input.Group compact>
             <Input
-                style={{ width: '60%' }}
+                style={{ width: '50%' }}
                 placeholder="Размер (например: 300 мл)"
                 value={currentVariant.size}
                 onChange={(e) => setCurrentVariant({...currentVariant, size: e.target.value})}
             />
             <InputNumber
-                style={{ width: '40%' }}
+                style={{ width: '25%' }}
                 placeholder="Цена"
                 min={0}
                 value={currentVariant.price}
                 onChange={(value) => setCurrentVariant({...currentVariant, price: value || 0})}
+            />
+            <InputNumber
+                style={{ width: '25%' }}
+                placeholder="id"
+                value={currentVariant.id_iiko}
+                onChange={(value) => setCurrentVariant({
+                    ...currentVariant, 
+                    id_iiko: value ? Number(value) : 0
+                })}
             />
             <Button
                 type="primary"
@@ -247,6 +271,12 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
             <InputNumber
                 style={{ marginRight: 8, flex: 1 }}
                 value={variant.price}
+                readOnly
+            />
+            <InputNumber
+                style={{ marginRight: 8, flex: 1 }}
+                value={variant.id_iiko}
+                placeholder="iiko id"
                 readOnly
             />
             <Button

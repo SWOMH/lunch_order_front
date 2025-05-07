@@ -20,7 +20,7 @@ interface IOrderItems {
   variant?: IVariant;
 }
 
-type OrderStatus = 'formalized' | 'completed' | 'canceled' | 'deleted' | 'unknown';
+type OrderStatus = 'formalized' | 'accounted' | 'completed' | 'canceled' | 'deleted' | 'unknown';
 
 export interface IAllOrdersHistory {
   order_id: number;

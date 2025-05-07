@@ -90,6 +90,7 @@ export const addDish = createAsyncThunk<IDish, DishUpdateData, { rejectValue: IA
 
 interface DishUpdateData {
   dish_name: string;
+  id_iiko: number;
   description: string;
   price: number;
   available: boolean;
@@ -100,6 +101,7 @@ interface DishUpdateData {
   additives: boolean;
   variants: Array<{
     dish_id: number;
+    id_iiko: number;
     size: string;
     price: number;
   }> | null;

@@ -11,7 +11,7 @@ import { ITelegramId } from '../../../types/user-types';
 
 export const OrdersPage = () => {
   const dispatch = useAppDispatch();
-  const orders = useAppSelector(selectOrderUserHistory);
+  const orders = useAppSelector(selectOrderUserHistory) || [];
   const isLoading = useAppSelector(selectOrderHistoryLoading);
   const errorLoad = useAppSelector(selectOrderHistoryError);
   const user = useAppSelector(selectUserInfo)
@@ -34,7 +34,7 @@ export const OrdersPage = () => {
     );
   };
 
-  if (orders.length === 0) {
+  if (!orders || !Array.isArray(orders) || orders.length === 0 || orders.every(order => !order.items || order.items.length === 0)) {
     return (
       <NullOrdersPage />
     );
