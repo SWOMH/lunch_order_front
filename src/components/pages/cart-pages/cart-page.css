@@ -232,25 +232,24 @@
 } 
 
 
-/* Медиа-запрос для мобильных устройств (до 768px) */
 @media (max-width: 768px) {
   .cart-page {
     width: 95vw;
-    padding-bottom: 180px; /* Уменьшаем отступ снизу */
+    padding-bottom: 180px;
   }
 
   .page-title {
-    font-size: 1.5rem; /* Уменьшаем размер заголовка */
+    font-size: 1.5rem;
     margin-bottom: 0.5rem;
   }
 
   .empty-text,
   .empty-desc {
-    font-size: 1.2rem; /* Уменьшаем размер текста в пустой корзине */
+    font-size: 1.2rem;
   }
 
   .cart-item {
-    flex-direction: column; /* Меняем направление на колонку */
+    flex-direction: column;
     align-items: flex-start;
     padding: 0.8rem;
   }
@@ -269,7 +268,7 @@
   }
 
   .cart-item-name {
-    font-size: 1.2rem; /* Уменьшаем размер названия */
+    font-size: 1.2rem;
   }
 
   .cart-item-variant {
@@ -297,7 +296,7 @@
 
   .cart-footer {
     padding: 0.8rem;
-    bottom: 60px; /* Поднимаем выше для мобильных */
+    bottom: 60px;
   }
 
   .cart-total-label,
@@ -316,7 +315,6 @@
   }
 }
 
-/* Для очень маленьких экранов (до 400px) */
 @media (max-width: 400px) {
   .cart-item-image {
     height: 120px;
@@ -337,7 +335,6 @@
   }
 }
 
-/* Остальные стили остаются без изменений */
 .cart-empty-state {
   font-family: "Poetsen One", sans-serif;
   display: flex;
@@ -348,5 +345,3 @@
   margin-top: 2rem;
   text-align: center;
 }
-
-/* ... остальные стили ... */
