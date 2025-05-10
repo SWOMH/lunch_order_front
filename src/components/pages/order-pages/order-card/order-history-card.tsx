@@ -79,26 +79,28 @@ export const OrderHistoryCard: React.FC<IOrderHistoryCard> = ({ order }) => {
     return (
       <div className={style.order_card}>
             <div className={style.order_header}>
-                <div>
+                <div className={style.numbre_and_date}>
                     <span className={style.order_number}>Заказ #{order.order_id}</span>
                     <span className={style.order_date}>{formatDate(order.datetime)}</span>
                 </div>
-                {order.status === 'formalized' && (
-                    <Button 
-                    danger 
-                    onClick={() => handleEditOrderStatus(order.order_id)}
-                    loading={isChangingStatus}
-                    disabled={isChangingStatus}
-                    >
-                    {isChangingStatus ? 'Отмена...' : 'Отменить заказ'}
-                    </Button>
-                )} 
-                <span className={`${style.order_status} ${getStatusClass(order.status)}`}>
-                    {order.status === 'formalized' && 'Оформлен'}
-                    {order.status === 'completed' && 'Завершен'}
-                    {order.status === 'canceled' && 'Отменен'}
-                    {order.status === 'deleted' && 'Удален'}
-                </span>
+                <div className={style.status_flex}>                  
+                  <span className={`${style.order_status} ${getStatusClass(order.status)}`}>
+                      {order.status === 'formalized' && 'Оформлен'}
+                      {order.status === 'completed' && 'Завершен'}
+                      {order.status === 'canceled' && 'Отменен'}
+                      {order.status === 'deleted' && 'Удален'}
+                  </span>
+                  {order.status === 'formalized' && (
+                      <Button 
+                      danger 
+                      onClick={() => handleEditOrderStatus(order.order_id)}
+                      loading={isChangingStatus}
+                      disabled={isChangingStatus}
+                      >
+                      {isChangingStatus ? 'Отмена...' : 'Отменить'}
+                      </Button>
+                  )} 
+                </div>
             </div>
 
             <div className={style.order_items}>
