@@ -1,4 +1,4 @@
-export const API_URL_HOST = 'http://localhost:80';
+export const API_URL_HOST = '/api';
 
 // USER
 export const API_USER_GET_INFO = `${API_URL_HOST}/user`;
