@@ -33,7 +33,7 @@ export const AdminUserCard: React.FC<IUserCard> = ({ user }) => {
       <div className={style.order_card}>
             <div className={style.order_header}>
                 <div>
-                    <span className={style.order_number}>{user.name}</span>
+                    <p><span className={style.order_number}>{user.name}</span></p>
                     <span className={style.order_date}>{user.telegram_name ? `Телеграм имя: ${user.telegram_name}` : ''}</span>
                 </div>
                 <span className={`${style.order_status} ${getStatusClass(user.banned)}`}>

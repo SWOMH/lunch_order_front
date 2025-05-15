@@ -76,11 +76,12 @@ export const AdminOrderCard: React.FC<IOrderHistoryCard> = ({ order }) => {
     return (
       <div className={style.order_card}>
         <div className={style.order_header}>
-          <div>
+          <div className={style.b_name_date}>
             <span className={style.order_number}>{order.user.full_name} || Заказ #{order.order_id}</span>
             <span className={style.order_date}>{formatDate(order.datetime)}</span>
           </div>
-          {(order.status === 'formalized' || order.status === 'completed') && (
+          <div className={style.b_status}>
+          {(order.status === 'formalized' || order.status === 'completed') && (            
             <Button 
               danger 
               onClick={() => handleEditOrderStatus(order.order_id)}
@@ -96,6 +97,7 @@ export const AdminOrderCard: React.FC<IOrderHistoryCard> = ({ order }) => {
             {order.status === 'canceled' && 'Отменен'}
             {order.status === 'deleted' && 'Удален'}
           </span>
+          </div>
         </div>
   
         <div className={style.order_items}>

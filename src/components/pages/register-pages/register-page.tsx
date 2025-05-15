@@ -170,25 +170,6 @@ export const RegisterPage = () => {
             </div>
             <p className="telegram-id-note">ID получен автоматически из Telegram</p>
           </div>
-          <div className="form-group telegram-info">
-            <label className="form-label">
-              Имя в Telegram
-            </label>
-            <div className="telegram-info-display">
-              {formData.telegram_name || 'Не указано'}
-            </div>
-          </div>
-
-          <div className="form-group telegram-info">
-            <label className="form-label">
-              Username
-            </label>
-            <div className="telegram-info-display">
-              {formData.telegram_username || 'Не указано'}
-            </div>
-          </div>
-          {/* <input type="hidden" name="telegram_name" value={formData.telegram_name} />
-          <input type="hidden" name="telegram_username" value={formData.telegram_username} /> */}
 
           <button
             type="submit"

@@ -8,6 +8,7 @@ import { AdminOrderCard } from './admin-order-card/admin-order-card';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { adminGetUsersActualOrders, getUserOrders } from '../../../../store/slices/orderingSlice';
 import { AdminNullOrdersPage } from './admin-orders-empty';
+import style from './admin-order-page.module.css';
 
 export const AdminOrdersPage = () => {
   const dispatch = useAppDispatch();
@@ -39,15 +40,15 @@ export const AdminOrdersPage = () => {
   }
 
   return (
-    <>
-      <div className='header'>Заказы</div>
-      <div className='order-list'>
+    <div className={style.orders_page}>
+      <div className={style.header}>Заказы</div>
+      <div className={style.order_list}>
         {orders.map(order => (
-          <div className='order-item' key={order.order_id}>
+          <div className={style.order_item} key={order.order_id}>
             <AdminOrderCard order={order} />
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }; 
