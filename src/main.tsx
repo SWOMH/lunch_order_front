@@ -6,6 +6,25 @@ import store from './store/store';
 import { routes } from './routes';
 import './index.css';
 
+const initializeTelegramWebApp = () => {
+  try {
+    // @ts-ignore
+    const tg = window.Telegram?.WebApp;
+    
+    if (tg) {
+      tg.expand(); // Раскрываем на весь экран
+      tg.enableClosingConfirmation(); // Включаем подтверждение закрытия
+      tg.ready(); // Говорим Telegram, что приложение готово
+      console.log('Telegram WebApp инициализирован', tg.initDataUnsafe);
+    }
+  } catch (error) {
+    console.error('Ошибка инициализации Telegram WebApp:', error);
+  }
+};
+
+initializeTelegramWebApp();
+
+
 const router = createBrowserRouter(routes);
 
 // @ts-ignore
