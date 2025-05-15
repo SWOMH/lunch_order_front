@@ -12,6 +12,7 @@
   
   
   .orders_page {
+    padding-bottom: 20%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }

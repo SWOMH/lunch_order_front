@@ -41,7 +41,7 @@ export const OrdersPage = () => {
   };
 
   return (
-    <>
+    <div className='orders-page'>
       <div className='header'>Заказы</div>
       <div className='order-list'>
         {orders.map(order => (
@@ -50,6 +50,6 @@ export const OrdersPage = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }; 

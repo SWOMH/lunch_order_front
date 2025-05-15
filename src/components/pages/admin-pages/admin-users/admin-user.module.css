@@ -17,6 +17,10 @@
     width: 90vw;
 }
 
+.users_page {
+    padding-bottom: 20%;
+}
+
 .order_items {
     margin-bottom: 0.75rem;
 }
