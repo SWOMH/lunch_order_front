@@ -198,11 +198,12 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
                 <Option value="Напитки">Напитки</Option>
                 <Option value="Бизнес-ланчи">Бизнес-ланчи</Option>
                 <Option value="Детское меню">Детское меню</Option>
+                <Option value="Летнее меню">Летнее меню</Option>
             </Select>
         </Form.Item>
 
         <Form.Item
-            label="Доступно для заказа"
+            label="Есть в меню (Удаляет блюдо)"
             name="available"
             valuePropName="checked"
         >
