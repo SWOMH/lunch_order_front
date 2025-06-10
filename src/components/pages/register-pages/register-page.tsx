@@ -140,7 +140,7 @@ export const RegisterPage = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="full_name">
-              Имя
+              Введите Ваше полное ФИО
             </label>
             <input
               type="text"
@@ -149,7 +149,7 @@ export const RegisterPage = () => {
               className={`form-input ${formErrors.full_name ? 'error' : ''}`}
               value={formData.full_name}
               onChange={handleChange}
-              placeholder="Введите ваше имя"
+              placeholder="Введите ваше полное ФИО"
             />
             {formErrors.full_name && (
               <div className="input-error">{formErrors.full_name}</div>
