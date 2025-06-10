@@ -120,9 +120,14 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
         <Form.Item
             label="ID блюда в iiko"
             name="id_iiko"
-            rules={[{ required: true, message: 'Пожалуйста, введите id из iiko' }]}
+            rules={[
+                { 
+                    required: variants.length === 0, 
+                    message: 'Пожалуйста, введите id из iiko' 
+                }
+            ]}
         >
-            <Input />
+            <Input disabled={variants.length > 0} />
         </Form.Item>
 
         <Form.Item
@@ -191,6 +196,8 @@ const DishEditForm: React.FC<DishEditFormProps> = ({ dish, onSave, onCancel }) =
                 <Option value="Фитнес меню">Фитнес меню</Option>
                 <Option value="Зимнее меню">Зимнее меню</Option>
                 <Option value="Напитки">Напитки</Option>
+                <Option value="Бизнес-ланчи">Бизнес-ланчи</Option>
+                <Option value="Детское меню">Детское меню</Option>
             </Select>
         </Form.Item>
 

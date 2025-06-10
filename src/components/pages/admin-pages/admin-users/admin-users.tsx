@@ -41,7 +41,7 @@ export const AdminUsersPage = () => {
   };
 
   return (
-    <>
+    <div className={style.users_page}>
       <div className={style.header}>Пользователи</div>
       <div className={style.order_list}>
         {allUsers.map(user => (
@@ -50,6 +50,6 @@ export const AdminUsersPage = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }; 

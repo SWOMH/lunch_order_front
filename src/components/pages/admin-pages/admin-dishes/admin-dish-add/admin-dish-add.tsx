@@ -144,6 +144,8 @@ const DishAddForm: React.FC<DishAddFormProps> = ({ onSave, onCancel }) => { // �
           <Option value="Фитнес меню">Фитнес меню</Option>
           <Option value="Зимнее меню">Зимнее меню</Option>
           <Option value="Напитки">Напитки</Option>
+          <Option value="Бизнес-ланчи">Бизнес-ланчи</Option>
+          <Option value="Детское меню">Детское меню</Option>
         </Select>
       </Form.Item>
 

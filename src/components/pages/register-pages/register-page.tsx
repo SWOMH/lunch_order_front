@@ -27,9 +27,11 @@ export const RegisterPage = () => {
 
   useEffect(() => { //@ts-ignore
     const tg = window.Telegram?.WebApp;
-    
+  
     if (tg) {
-      const user = tg.initDataUnsafe?.user;
+      const initData = tg.initDataUnsafe || tg.initData;
+      const user = initData?.user;
+      
       if (user) {
         const firstName = user.first_name || '';
         const lastName = user.last_name || '';
@@ -37,18 +39,21 @@ export const RegisterPage = () => {
         
         setFormData(prev => ({
           ...prev,
-          full_name: fullName || firstName || '',
+          full_name: '',
           telegram_id: user.id.toString(),
-          telegram_name: firstName || '',
+          telegram_name: fullName || firstName || '',
           telegram_username: user.username || ''
         }));
       }
-    } else {
-      // Для разработки используем тестовый ID
-      setFormData(prev => ({
-        ...prev,
-        telegram_id: '3'
-      }));
+    } else{
+      console.log('Не, нихуя')
+      // setFormData(prev => ({
+      //   ...prev,
+      //   telegram_id: '3',
+      //   full_name: 'Test User',
+      //   telegram_name: 'Test',
+      //   telegram_username: 'testuser'
+      // }));
     }
   }, []);
 

@@ -16,18 +16,20 @@ function App() {
 
   useEffect(() => { //@ts-ignore
     const tg = window.Telegram?.WebApp;
-    
+  
     if (tg) {
-      tg.ready();
-      const telegramId = tg.initDataUnsafe?.user?.id;
+      const initData = tg.initDataUnsafe || tg.initData;
+      const telegramId = initData?.user?.id;
       
       if (telegramId) {
-        dispatch(getUserInfo(telegramId));
+        dispatch(getUserInfo(telegramId.toString()));
+      } else {
+        console.error('Telegram ID не получен');        
+        //   dispatch(getUserInfo('3')); // Только для разработки
       }
     } else {
-      // Для тестирования без Telegram WebApp
-      const testTelegramId = '3';
-      dispatch(getUserInfo(testTelegramId));
+      console.log('Нихуя нет пользователя')
+      // dispatch(getUserInfo('3'));
     }
   }, [dispatch]);
 
